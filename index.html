@@ -50,16 +50,24 @@
           <tr>
             <td style="padding:20px;width:25%;vertical-align:middle">
               <div class="one">
-                <img src='images/network.svg' width="160">
+                <img src='images/mistral_circles.JPG' width="160">
               </div>
             </td>
             <td style="padding:20px;width:75%;vertical-align:middle">
-              <papertitle>Automated Tools for Mechanistic Interpretability</papertitle>
-              <br></br>
-              Ongoing work.
+              <a href="https://arxiv.org/abs/2405.14860">
+                <papertitle>Not All Language Model Features Are Linear</papertitle>
+              </a>
+              <br>
+              <a href="https://www.joshengels.com/">Joshua Engels</a>,
+              <strong>Isaac Liao</strong>,
+              <a href="https://ericjmichaud.com/">Eric J. Michaud</a>,
+              <a href="https://wesg.me/">Wes Gurnee</a>,
+              <a href="https://space.mit.edu/home/tegmark/">Max Tegmark</a>
+              <br>
+              <a href="https://arxiv.org/abs/2405.14860">arXiv</a>, 2024
               <p></p>
               <p>
-	      Compilation of over 30 problems and corresponding datasets for learning algorithmic tasks on sequences. Novel methods for conversion of learned recurrent neural networks into interpretable python code equivalents, for model verification.
+	      When large language models do modular addition, the numbers are stored in a circle.
               </p>
             </td>
           </tr>
@@ -82,7 +90,7 @@
               <a href="https://openreview.net/forum?id=Ns2X7Azudy">arXiv</a>, 2023
               <p></p>
               <p>
-	      Introduction of a novel hypernetwork architecture for generative modeling of neural network weights. Architecture is a merge of Pareto hypernetworks, hierarchical VAEs, and graph transformers. Reverse-engineering of learned algorithms, with algorithmic phase transitions using order parameters and visualization via force-directed graph drawing.
+	      When we generatively model a neural network's weights, we tend to generate weights that are smartly arranged.<!--Introduction of a novel hypernetwork architecture for generative modeling of neural network weights. Architecture is a merge of Pareto hypernetworks, hierarchical VAEs, and graph transformers. Reverse-engineering of learned algorithms, with algorithmic phase transitions using order parameters and visualization via force-directed graph drawing.-->
               </p>
             </td>
           </tr>
@@ -106,10 +114,41 @@
               <a href="https://openreview.net/forum?id=Ns2X7Azudy">TMLR</a>, 2023
               <p></p>
               <p>
-	      Introduces a novel machine learning optimization algorithm which blends learn to optimize (L2O) meta-learning techniques with quasi-Newton optimization methods using sparse neural networks. Theoretical results regarding convex and nonconvex stochastic convergence and sparse neural network expressiveness, with experimental support.
+	      We can feed gradients as input into a linear neural network, get a step as an output, and train the network to perform optimization, during the optimization.<!--Introduces a novel machine learning optimization algorithm which blends learn to optimize (L2O) meta-learning techniques with quasi-Newton optimization methods using sparse neural networks. Theoretical results regarding convex and nonconvex stochastic convergence and sparse neural network expressiveness, with experimental support.-->
               </p>
             </td>
           </tr>
+
+          <tr>
+            <td style="padding:20px;width:25%;vertical-align:middle">
+              <div class="one">
+                <img src='images/MIPS_flowchart.png' width="160">
+              </div>
+            </td>
+            <td style="padding:20px;width:75%;vertical-align:middle">
+              <a href="https://arxiv.org/abs/2402.05110">
+                <papertitle>Opening the AI Black Box: Program Synthesis via Mechanistic Interpretability</papertitle>
+              </a>
+              <br>
+              <a href="https://ericjmichaud.com/">Eric J. Michaud</a>,
+              <strong>Isaac Liao</strong>,
+              <a href="https://www.vedanglad.com/">Vedang Lad</a>,
+              <a href="https://kindxiaoming.github.io/">Ziming Liu</a>,
+              Anish Mudide,
+	      Chloe Loughridge,
+              <a href="https://carlguo.com/">Zifan Carl Guo</a>,
+	      Tara Rezaei Kheirkhah,
+	      Mateja Vukeli&#263,
+              <a href="https://space.mit.edu/home/tegmark/">Max Tegmark</a>
+              <br>
+              <a href="https://arxiv.org/abs/2402.05110">arXiv</a>, 2024
+              <p></p>
+              <p>
+	      We auto-convert RNNs into interpretable python code equivalents, for model verification.<!--Novel benchmark for automated mechanistic interpretation of recurrent neural networks. Novel methods for conversion of learned recurrent neural networks into interpretable python code equivalents, for model verification.-->
+              </p>
+            </td>
+          </tr>
+
         </tbody></table>
 
         <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
@@ -137,7 +176,7 @@
 	      <a href="https://tamarabroderick.com/course_6_7830_2023_spring.html">6.7830 Bayesian Modeling and Inference</a>
               <p></p>
               <p>
-	      Targeted movie recommendation systems using the Low-Rank Approximation with Alternating Least Squares method of large matrix completion. Reinterpretation of the algorithm in the Bayesian formulation, and an extension of the resulting Bayesian model to allow for uncertainty in user preferences and movie characteristics. Experiments to show that this improves recommendation accuracy.
+	      We improve targeted movie recommendation systems by 2%, by using Bayesianism to add uncertainty into SVD-based large matrix completion algorithms.<!--Targeted movie recommendation systems using the Low-Rank Approximation with Alternating Least Squares method of large matrix completion. Reinterpretation of the algorithm in the Bayesian formulation, and an extension of the resulting Bayesian model to allow for uncertainty in user preferences and movie characteristics. Experiments to show that this improves recommendation accuracy.-->
               </p>
             </td>
           </tr>
@@ -158,7 +197,7 @@
 	      <a href="https://cbmm.mit.edu/9-520">6.7910 Statistical Learning Theory</a>
               <p></p>
               <p>
-	      Exploration of the expressiveness properties of sparse neural network architectures. Extensions of theorems about the ability of sparse architectures to replicate the behavior of any other sparse architecture. Experimental evaluation of the ability of sparse architectures to perform compositionally sparse linear operations.
+	      This sparse neural network can imitate almost all other neural network architectures that have about the same amount of parameters.<!--Exploration of the expressiveness properties of sparse neural network architectures. Extensions of theorems about the ability of sparse architectures to replicate the behavior of any other sparse architecture. Experimental evaluation of the ability of sparse architectures to perform compositionally sparse linear operations.-->
               </p>
             </td>
           </tr>
@@ -179,7 +218,7 @@
 	      <a href="http://6.8300.csail.mit.edu/sp21/">6.819 Advances in Computer Vision</a>
               <p></p>
               <p>
-	      Treatment of variational inference from the point of view of information compression, with application to images. Ideation, refinement, theoretical analysis, and empirical testing of ELBO maximization-based lossless image compression schemes resembling VAEs and BNNs. Reparameterization trick, hierarchical depth, and KL annealing schedules, and rejection sampling all independently reinvented without prior knowledge of existing variational inference techniques.
+	      Reinvented most of the framework that powers VAEs and BNNs, from the lens of image compression.<!--Treatment of variational inference from the point of view of information compression, with application to images. Ideation, refinement, theoretical analysis, and empirical testing of ELBO maximization-based lossless image compression schemes resembling VAEs and BNNs. Reparameterization trick, hierarchical depth, and KL annealing schedules, and rejection sampling all independently reinvented without prior knowledge of existing variational inference techniques.-->
               </p>
             </td>
           </tr>
@@ -200,7 +239,7 @@
 	      <a href="https://ocw.mit.edu/courses/8-06-quantum-physics-iii-spring-2018/">8.06 Quantum Physics III</a>
               <p></p>
               <p>
-	      Rederivation of joint eigenvalue distribution of random Hermitian matrices, using a combination of second-order quantum perturbation theory, Metropolis-Hastings, and Brownian motion. Rederivation of Wigner semicircle law. Connections to chaotic quantum billiards and application to emission spectra of quantum dots.
+	      We rederive the spectrum of random (Gaussian) Hermitian matrices.<!--Rederivation of joint eigenvalue distribution of random Hermitian matrices, using a combination of second-order quantum perturbation theory, Metropolis-Hastings, and Brownian motion. Rederivation of Wigner semicircle law. Connections to chaotic quantum billiards and application to emission spectra of quantum dots.-->
               </p>
             </td>
           </tr>
@@ -226,7 +265,7 @@
             <td style="padding:20px;width:75%;vertical-align:middle">
 	      <papertitle>Utility Teaching Assistant for MIT 8.01 Classical Mechanics I</papertitle></a>
               <p>
-	      Novel methods for applying large language models to assist in teaching physics to ~700 students. Large language models for answering student questions and generating physics problems used for teaching. Drafting of manuscripts for publication in journals on physics education and AI in education. Course website maintenance. Office hours, grading, exam proctoring.
+	      We use large language models to generate physics problems to help teach ~700 students. Resulted in publishing "<a href="https://meetings.aps.org/Meeting/APR24/Session/N00.61"><papertitle>Exploring the integration of AI into Physics Education: Leveraging ChatGPT for Problem Generation</papertitle></a>" (<a href="https://www.vedanglad.com/">Vedang Lad</a>, <strong>Isaac Liao</strong>, <a href="https://scholar.google.com/citations?hl=en&user=NKYiX0QAAAAJ&view_op=list_works&sortby=pubdate">Mohamed Abdelhafez</a>, <a href="https://physics.mit.edu/physics-directory/peter-dourmashkin/">Peter Dourmashkin</a>, <a href="https://www.shamseladawy.com/">Shams El-Adawy</a>) in <a href="https://meetings.aps.org/Meeting/APR24/Session/N00.61">American Physical Society</a>, 2024.<!--Novel methods for applying large language models to assist in teaching physics to ~700 students. Large language models for answering student questions and generating physics problems used for teaching. Drafting of manuscripts for publication in journals on physics education and AI in education. Course website maintenance. Office hours, grading, exam proctoring.-->
               </p>
             </td>
           </tr>
@@ -252,7 +291,7 @@
 		      <papertitle>Swarm Intelligence for MIT Battlecode AI Programming Competition</papertitle></a>
               <p></p>
               <p>
-	      Summary report for my strategy in the <a href="https://www.battlecode.org/">Battlecode</a> 2021 Game AI programming competition, in which I got 7th place worldwide.
+	      I placed seventh worldwide in the <a href="https://www.battlecode.org/">Battlecode</a> 2021 Game AI programming competition, and this is my strategy report.<!--Summary report for my strategy in the <a href="https://www.battlecode.org/">Battlecode</a> 2021 Game AI programming competition, in which I got 7th place worldwide.-->
               </p>
             </td>
           </tr>
