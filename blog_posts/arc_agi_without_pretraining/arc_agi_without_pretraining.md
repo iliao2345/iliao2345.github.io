@@ -257,7 +257,7 @@ The actual data ($z$, hidden activations, and puzzles) passing through our layer
 
 ### Multitensors
 
-Most common classes of machine learning architectures operate on a single type of tensor with constant rank. LLMs operate on rank 3 tensors of shape $[n\\_batch, n\\_tokens, n\\_channels]$, and CNNs operate on a rank 4 tensors of shape $[n\\_batch, n\\_channels, height, width]$. Our multitensors are a set of varying-rank tensors of unique type, whose dimensions are a subset of a rank 6 tensor of shape $[n\\_examples$, $n\\_colors$, $n\\_directions$, $height$, $width$, $n\\_channels]$. We always keep the channel dimension, so there are at most 32 tensors in every multitensor. We also maintain [several rules](#rules-for-legal-multitensors) that determine whether a tensor shape is "legal" or not, which reduces the number of tensors in a multitensor to 18.
+Most common classes of machine learning architectures operate on a single type of tensor with constant rank. LLMs operate on rank 3 tensors of shape $[n\\_batch, n\\_tokens, n\\_channels]$, and CNNs operate on a rank 4 tensors of shape $[n\\_batch, n\\_channels, height, width]$. Our multitensors are a set of varying-rank tensors of unique type, whose dimensions are a subset of a rank 6 tensor of shape $[n\\_examples$, $n\\_colors$, $n\\_directions$, $height$, $width$, $n\\_channels]$. We always keep the $channel$ dimension, so there are at most 32 tensors in every multitensor. We also maintain [several rules](#rules-for-legal-multitensors) that determine whether a tensor shape is "legal" or not, which reduces the number of tensors in a multitensor to 18.
 
 | Dimension | Size                                                                                                                             |
 | --------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -266,15 +266,13 @@ Most common classes of machine learning architectures operate on a single type o
 | Direction | 8                                                                                                                                |
 | Height    | [Determined when preprocessing the puzzle](#output-shape-determination)                                                                       |
 | Width     | [Determined when preprocessing the puzzle](#output-shape-determination)                                                                       |
-| Channel   | In the residual connections, the size is 8 if the direction dimension is included, else 16. Within layers it is layer-dependent. |
+| Channel   | In the residual connections, the size is 8 if the $direction$ dimension is included, else 16. Within layers it is layer-dependent. |
 
-To give an idea of how a multitensor stores data, an ARC-AGI puzzle can be represented by using the $[examples, colors, height, width, channel]$ tensor, by using the channel dimension to select either the input or output grid, and the width/height dimensions for pixel location, a one hot vector in the color dimension, specifying what color that pixel is. The $[examples, width, channel]$ and $[examples, height, channel]$ tensors can similarly be used to store masks representing grid shapes for every example for every input/output grid. All those tensors are included in a single multitensor that is computed by the network just before the final [linear heads](#linear-heads) layer.
+To give an idea of how a multitensor stores data, an ARC-AGI puzzle can be represented by using the $[examples, colors, height, width, channel]$ tensor, by using the $channel$ dimension to select either the input or output grid, and the $width$/$height$ dimensions for pixel location, a one hot vector in the $color$ dimension, specifying what color that pixel is. The $[examples, width, channel]$ and $[examples, height, channel]$ tensors can similarly be used to store masks representing grid shapes for every example for every input/output grid. All those tensors are included in a single multitensor that is computed by the network just before the final [linear heads](#linear-heads) layer.
 
-When we apply an operation on a multitensor, we by default assume that all non-channel dimensions are treated identically as batch dimensions by default. The operation is copied across the indices of dimensions unless specified. This ensures that we keep all our symmetries intact until we use a specific layer meant to break a specific symmetry.
+When we apply an operation on a multitensor, we by default assume that all non-$channel$ dimensions are treated identically as batch dimensions by default. The operation is copied across the indices of dimensions unless specified. This ensures that we keep all our symmetries intact until we use a specific layer meant to break a specific symmetry.
 
-<!-- Some layers require an object for every tensor in a multitensor, so when talking about sets of objects all corresponding to the same multitensor, we may use the prefix "multi". For example, we may say "multiweights" when talking about using a linear layer with separate weights for every tensor in a multitensor.
-
-Usually when talking about a tensor's shape, we will not mention the channel dimension as it is included by default. -->
+A final note on the $channel$ dimension: usually when talking about a tensor's shape, we will not even mention the $channel$ dimension as it is included by default.
 
 **The full architecture consists of the following layers, which are each described in the Appendix:**
 - Begin with parameters of the $z$ distribution,
@@ -610,7 +608,7 @@ We can look at the average output of the [decoding layer](#decoding-layer) corre
   <td width="50%">
   <strong> (Examples, height, channel) tensor:</strong>
   <br><br/>
-  For every example and row, there is a vector of dimension $n\_channels$. This forms a dataset of vectors. Taking the PCA of these vectors, the top principal component vector reformatted back into an (examples, height) matrix (shown on right) can tell us which examples/row combinations are uniquely identified by the stored information. The top principal component (shown on right) is 1485 times stronger than the second principal component, which indicates to us that basically all of the information is in the above tensor. <strong>For every example, the two brightest pixels give the rows where the light blue rows in the grids are.</strong>
+  For every example and row, there is a vector of dimension $n\_channels$. This forms a dataset of vectors. Taking the PCA of these vectors, the top principal component vector reformatted back into an $(examples, height)$ matrix (shown on right) can tell us which examples/row combinations are uniquely identified by the stored information. The top principal component (shown on right) is 1485 times stronger than the second principal component, which indicates to us that basically all of the information is in the above tensor. <strong>For every example, the two brightest pixels give the rows where the light blue rows in the grids are.</strong>
   </td>
   <td width="50%"><img align="right" src="./resources/272f95fa_example_height_component_0.png"></td>
   </tr>
@@ -751,7 +749,7 @@ We begin by normalizing the learned per-element means for $z$.[^12] Then, we fig
 
 We compute the information content of $z$ as the KL divergence between the distribution of this sample and $N(0,1)$.
 
-Finally, we postprocess the noisy $z$ by scaling it by the sigmoid of the signal-to-noise ratio.[^14] This ensures that $z$ is kept as-is when its variance consists mostly of useful information and it is nearly zero when its variance consists mostly of noise. All this is done 4 times to make a channel dimension of 4. Then we apply a projection (with different weights per tensor in the multitensor, ie. per-tensor projections) mapping the channel dimension up to the dimension of the residual stream.
+Finally, we postprocess the noisy $z$ by scaling it by the sigmoid of the signal-to-noise ratio.[^14] This ensures that $z$ is kept as-is when its variance consists mostly of useful information and it is nearly zero when its variance consists mostly of noise. All this is done 4 times to make a $channel$ dimension of 4. Then we apply a projection (with different weights per tensor in the multitensor, ie. per-tensor projections) mapping the $channel$ dimension up to the dimension of the residual stream.
 
 <img align="right" src="./resources/Multitensor_Sharing.png"  width="50%" style="margin: 20px 0 20px 10px;">
 
@@ -763,36 +761,36 @@ First, the input from the residual stream passes through per-tensor projections 
 
 #### Softmax Layer
 
-This layer allows the network to work with internal one-hot representations, by giving it the tools to denoise and sharpen noisy one-hot vectors. For every tensor in the input multitensor, this layer lists out all the possible subsets of dimensions of the tensor to take a softmax over[^15], takes the softmax over these subsets of dimensions, and concatenates all the softmaxxed results together in the channel dimension. The output dimension varies across different tensors in the multitensor, depending on their tensor rank. A pre-norm is applied, and per-tensor projections map to and from the residual stream. The layer has input channel dimension of 2.
+This layer allows the network to work with internal one-hot representations, by giving it the tools to denoise and sharpen noisy one-hot vectors. For every tensor in the input multitensor, this layer lists out all the possible subsets of dimensions of the tensor to take a softmax over[^15], takes the softmax over these subsets of dimensions, and concatenates all the softmaxxed results together in the $channel$ dimension. The output dimension varies across different tensors in the multitensor, depending on their tensor rank. A pre-norm is applied, and per-tensor projections map to and from the residual stream. The layer has input $channel$ dimension of 2.
 
 #### Directional Cummax/Shift Layer
 
 The directional cummax and shift layers allow the network to perform the non-equivariant cummax and shift operations in an equivariant way, namely by applying the operations once per direction, and only letting the output be influenced by the results once the directions are aggregated back together (by the [multitensor communication layer](#multitensor-communication-layer)). These layers are the sole reason we included the $direction$ dimension when defining a multitensor: to store the results of directional layers and operate on each individually. Of course, this means when we apply a spatial equivariance transformation, we must also permute the indices of the $direction$ dimension accordingly, which can get complicated sometimes.
 
-The directional cummax layer takes the eight indices of the direction dimension, treats each slice as corresponding to one direction (4 cardinal, 4 diagonal), performs a cumulative max in the respective direction for each slice, does it in the opposite direction for half the channels, and stacks the slices back together in the direction dimension. The slices are rescaled to have min $-1$ and max $1$ before applying the cumulative max.
+The directional cummax layer takes the eight indices of the $direction$ dimension, treats each slice as corresponding to one direction (4 cardinal, 4 diagonal), performs a cumulative max in the respective direction for each slice, does it in the opposite direction for half the channels, and stacks the slices back together in the $direction$ dimension. The slices are rescaled to have min $-1$ and max $1$ before applying the cumulative max.
 
 The directional shift layer does the same thing, but for shifting the grid by one pixel instead of applying the cumulative max, and without the rescaling.
 
 Some details:
 - Per-tensor projections map to and from the residual stream, with pre-norm.
-- Input channel dimension is 4
+- Input $channel$ dimension is 4
 - These layers are only applied to the $[example, color, direction, height, width, channel]$ and $[example, direction, height, width, channel]$ tensors in the input multitensor.
 
 ![image](./resources/Directional_Shift_Cummax.png)
 
 #### Directional Communication Layer
 
-By default, the network is equivariant to permutations of the eight directions, but we only want symmetry up to rotations and flips. So, this layer provides a way to send information between two slices in the direction dimension, depending on the angular difference in the two directions. This layer defines a separate linear map to be used for each of the 64 possible combinations of angles, but the weights of the linear maps are minimally tied such that the directional communication layer is equivariant to reflections and rotations. This gets complicated really fast, since the direction dimension's indices also permute when equivariance transformations are applied. Every direction slice in a tensor accumulates it's 8 messages, and adds the results together.[^16]
+By default, the network is equivariant to permutations of the eight directions, but we only want symmetry up to rotations and flips. So, this layer provides a way to send information between two slices in the $direction$ dimension, depending on the angular difference in the two directions. This layer defines a separate linear map to be used for each of the 64 possible combinations of angles, but the weights of the linear maps are minimally tied such that the directional communication layer is equivariant to reflections and rotations. This gets complicated really fast, since the $direction$ dimension's indices also permute when equivariance transformations are applied. Every direction slice in a tensor accumulates it's 8 messages, and adds the results together.[^16]
 
-For this layer, there are per-tensor projections to and from the residual stream with pre-norm. The input channel dimension is 2.
+For this layer, there are per-tensor projections to and from the residual stream with pre-norm. The input $channel$ dimension is 2.
 
 #### Nonlinear Layer
 
-We use a SiLU nonlinearity with channel dimension 16, surrounded by per-tensor projections with pre-norm.
+We use a SiLU nonlinearity with $channel$ dimension 16, surrounded by per-tensor projections with pre-norm.
 
 #### Normalization Layer
 
-We normalize all the tensors in the multitensor, using means and variances computed across all dimensions except the channel dimension. Normalization as used within other layers also generally operates this way.
+We normalize all the tensors in the multitensor, using means and variances computed across all dimensions except the $channel$ dimension. Normalization as used within other layers also generally operates this way.
 
 #### Linear Heads
 
@@ -800,9 +798,9 @@ We must take the final multitensor, and convert it to the format of an ARC-AGI p
 
 <img align="right" src="./resources/Linear_heads.png"  width="50%" style="margin: 20px 0 20px 10px;">
 
-The colors of every pixel for every example for both input and output, have logits defined by the $[examples, colors, height, width, channel]$ tensor, with the channel dimension linearly mapped down to a size of 2, representing the input and output grids.[^17] The log-likelihood is given by the crossentropy, with sum reduction across all the grids.
+The colors of every pixel for every example for both input and output, have logits defined by the $[examples, colors, height, width, channel]$ tensor, with the $channel$ dimension linearly mapped down to a size of 2, representing the input and output grids.[^17] The log-likelihood is given by the crossentropy, with sum reduction across all the grids.
 
-For grids of non-constant shape, the $[examples, width, channel]$ and $[examples, height, channel]$ tensors are used to create distributions over possible contiguous rectangular slices of each grid of colors. Again, the channel dimension is mapped down to a size of 2 for input and output grids. For every grid, we have a vector of size $[width]$ and a vector of size $[height]$. The log likelihood of every slice of the vector is taken to be the sum of the values within the slice, minus the values outside the slice. The log likelihoods for all the possible slices are then normalized to have total probability one, and the colors for every slice are given by the color logits defined in the previous paragraph.
+For grids of non-constant shape, the $[examples, width, channel]$ and $[examples, height, channel]$ tensors are used to create distributions over possible contiguous rectangular slices of each grid of colors. Again, the $channel$ dimension is mapped down to a size of 2 for input and output grids. For every grid, we have a vector of size $[width]$ and a vector of size $[height]$. The log likelihood of every slice of the vector is taken to be the sum of the values within the slice, minus the values outside the slice. The log likelihoods for all the possible slices are then normalized to have total probability one, and the colors for every slice are given by the color logits defined in the previous paragraph.
 
 With the puzzle distribution now defined, we can now evaluate the log-likelihood of the observed target puzzle, to use as the reconstruction error.[^18]
 
@@ -810,10 +808,10 @@ With the puzzle distribution now defined, we can now evaluate the log-likelihood
 [^9]: Target capacities are exponentially parameterized and rescaled by 10x to increase sensitivity to learning, initialized at a constant $10^4$ nats per tensor, and forced to be above a minimum value of half a nat.
 [^10]: The actual information content, which the layer computes later on, will be slightly different because of the per-element capacity adjustments.
 [^11]: Means are initialized using normal distribution of variance $10^{-4}$.
-[^12]: Means and variances for normalization are computed along all non-channel dimensions.
+[^12]: Means and variances for normalization are computed along all non-$channel$ dimensions.
 [^13]: There are many caveats with the way this is implemented and how it works; please refer to the [code](#code) if you want more details.
 [^14]: We are careful not to let the postprocessing operation, which contains unbounded amounts of information via the signal-to-noise ratios, to leak lots of information across the layer. We only let a bit of it leak by averaging the signal-to-noise ratios across individual tensors in the multitensor.
-[^15]: One exception: we always include the example dimension in the subset of dimensions.
+[^15]: One exception: we always include the $example$ dimension in the subset of dimensions.
 [^16]: We also multiply the results by coefficients depending on the angle: 1 for 0 degrees and 180 degrees, 0.2 for 45 degrees and 135 degrees, and 0.4 for 90 degrees.
 [^17]: The linear map is initialized to be identical for both the input and output grid, but isn't fixed this way during learning. Sometimes this empirically helps with problems of inconsistent grid shapes. The bias on this linear map is multiplied by 100 before usage, otherwise it doesn't seem to be learned fast enough empirically. This isn't done for the shape tensors described by the following paragraph though.
 [^18]: There are multiple slices of the same shape that result in the correct puzzle to be decoded. We sum together the probabilities of getting any of the slices by applying a logsumexp to the log probabilities. But, we found empirically that training prematurely collapses onto one particular slice. So, we pre-multiply and post-divide the log probabilities by a coefficient when applying the logsumexp. The coefficient starts at 0.1 and increases exponentially to 1 over the first 100 iterations of training. We also pre-multiply the masks by the square of this coefficient as well, to ensure they are not able to strongly concentrate on one slice too early in training.
@@ -822,12 +820,12 @@ With the puzzle distribution now defined, we can now evaluate the log-likelihood
 
 #### Rules for legal multitensors
 
-1. At least one non-example dimension must be included. Examples are not special for any reason not having to do with colors, directions, rows, and columns.
-2. If the width or height dimension is included, the example dimension should also be included. Positions are intrinsic to grids, which are indexed by the example dimension. Without a grid it doesn't make as much sense to talk about positions.
+1. At least one non-$example$ dimension must be included. Examples are not special for any reason not having to do with colors, directions, rows, and columns.
+2. If the $width$ or $height$ dimension is included, the $example$ dimension should also be included. Positions are intrinsic to grids, which are indexed by the $example$ dimension. Without a grid it doesn't make as much sense to talk about positions.
 
 #### Weight Tying for Reflection/Rotation Symmetry
 
-When applying a different linear layer to every tensor in a multitensor, we have a linear layer for tensors having a width but not height dimension, and another linear layer for tensors having a height but not width dimension. Whenever this is the case, we tie the weights together in order to preserve the whole network's equivariance to diagonal reflections and 90 degree rotations, which swap the width and height dimensions.
+When applying a different linear layer to every tensor in a multitensor, we have a linear layer for tensors having a $width$ but not $height$ dimension, and another linear layer for tensors having a $height$ but not $width$ dimension. Whenever this is the case, we tie the weights together in order to preserve the whole network's equivariance to diagonal reflections and 90 degree rotations, which swap the $width$ and $height$ dimensions.
 
 The softmax layer is not completely symmetrized because different indices of the output correspond to different combinations of dimension to softmax over. Tying the weights properly would be a bit complicated and time consuming for the performance improvement we expect, so we did not do this.
 
@@ -848,21 +846,21 @@ Before doing any training, we determine whether the given ARC-AGI puzzle follows
 
 Based on rules 1 and 3, we try to predict the shape of held-out outputs, prioritizing rule 1 over rule 3. If either rule holds, we force the postprocessing step to only consider the predicted shape by overwriting the masks produced by the [linear heads](#linear-heads). If neither rule holds, we make a temporary prediction of the largest width and height out of the grids in the given ARC-AGI puzzle, and we allow the masks to predict shapes that are smaller than that.
 
-The largest width and height that is given or predicted, are used as the size of the [multitensor](#multitensors)'s width and height dimensions.
+The largest width and height that is given or predicted, are used as the size of the [multitensor](#multitensors)'s $width$ and $height$ dimensions.
 
 The predicted shapes are also used as masks when performing the [multitensor communication](#multitensor-communication-layer), [directional communication](#directional-communication-layer) and [directional cummax/shift](#directional-cummaxshift-layer) layers[^19]. We did not apply masks for the other layers because of time constraints and because we do not believe it will provide for much of a performance improvement.
 
 #### Number of Colors
 
-We notice that in almost all ARC-AGI puzzles, colors that are not present in the puzzle are not present in the true answers. Hence, any colors that do not appear in the puzzle are not given an index in the color dimension of the [multitensor](#multitensors).
+We notice that in almost all ARC-AGI puzzles, colors that are not present in the puzzle are not present in the true answers. Hence, any colors that do not appear in the puzzle are not given an index in the $color$ dimension of the [multitensor](#multitensors).
 
-In addition, black is treated as a special color that is never included in the multitensor, since it normally represents the background in many puzzles. When performing color classification, a tensor of zeros is appended to the color dimension after applying the [linear head](#linear-heads), to represent logits for the black color.
+In addition, black is treated as a special color that is never included in the multitensor, since it normally represents the background in many puzzles. When performing color classification, a tensor of zeros is appended to the $color$ dimension after applying the [linear head](#linear-heads), to represent logits for the black color.
 
 ### Postprocessing
 
 Postprocessing primarily deals with denoising the answers sampled from the network. There are also [some operations](#linear-heads) performed to convert the constant-shape grids outputted by the network to the variable shape grids present in some puzzles.
 
-Generally, when we sample answers from the network by taking the logits of the $[examples, colors, height, width, channels]$ tensor and argmaxxing over the color dimension, we find that the grids are noisy and will often have the wrong colors for several random pixels. We developed several methods for removing this noise:
+Generally, when we sample answers from the network by taking the logits of the $[examples, colors, height, width, channels]$ tensor and argmaxxing over the $color$ dimension, we find that the grids are noisy and will often have the wrong colors for several random pixels. We developed several methods for removing this noise:
 1. Find the most commonly sampled answer.
 2. Construct an exponential moving average of the output color logits before taking the softmax to produce probabilities. Also construct an exponential moving average of the masks.
 3. Construct an exponential moving average of the output color probabilities after taking the softmax. Also construct an exponential moving average of the masks.
@@ -1017,7 +1015,7 @@ The only surviving tensors are the $(color, channel)$ and $(example, height, wid
   <td width="50%">
   <strong> (Color, channel) tensor:</strong>
   <br><br/>
-  The (color, channel) tensor just serves to distinguish the individual roles of the colors in the puzzle.
+  The $(color, channel)$ tensor just serves to distinguish the individual roles of the colors in the puzzle.
   </td>
   <td width="50%"><img align="right" src="./resources/41e4d17e_color_component_0.png"><img align="right" src="./resources/41e4d17e_color_component_1.png"></td>
   </tr>
@@ -1062,7 +1060,7 @@ If you'd like to cite this blog post, use the following entry:
 ```
 
 
-[^19]: The two masks for the input and output are combined together to make one mask for use in these operations, since the channel dimension in these operations don't necessarily correspond to the input and output grids.
+[^19]: The two masks for the input and output are combined together to make one mask for use in these operations, since the $channel$ dimension in these operations don't necessarily correspond to the input and output grids.
 
 <br/><br/>
 ---
