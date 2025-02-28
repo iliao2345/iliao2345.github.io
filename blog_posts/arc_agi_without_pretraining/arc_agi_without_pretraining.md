@@ -111,7 +111,7 @@ The ARC Prize team has repeatedly launched competitions for solving ARC-AGI, wit
 
 # Our Solution Method
 
-<img align="right" src="./resources/algorithm_environment.JPG" width="50%" style="padding-top: 300px;">
+<img align="right" src="./resources/algorithm_environment.JPG" width="50%" style="padding-top: 20px;">
 
 **We believe lossless information compression schemes can be used as programs for solving ARC-AGI. The more bit-efficient the compression scheme, the "smarter" the answer and the more correct it is, and with enough bit efficiency we can eventually get the right answer.** To solve a set of ARC-AGI puzzles, we find the smallest possible bit string that when decompressed, exactly produces the set of target puzzles, but with any answers filled in. Those are our answer guesses. The main challenge is to find a bit-efficient encoder-decoder system where the encoder doesn't need any answers as input to make the bit string. Our method for solving ARC-AGI uses a **training algorithm** and a **neural network forward pass** as the **encoder** and **decoder**, respectively, and the compressed bit representation contains learned parameters such as the weights and inputs for the network.
 
@@ -251,7 +251,7 @@ To illustrate what we mean, suppose that both $z$ and an ARC-AGI puzzle take the
 
 The actual data ($z$, hidden activations, and puzzles) passing through our layers comes in a format that we call a "**multitensor**", which is just a bucket of tensors of various shapes. All the equivariances can be described in terms of how they change a multitensor. **In order to understand any of the layers we list, you must first read the below section on multitensors.**
 
-<img align="right" src="./resources/Multitensor.png" width="50%" style="padding-top: 300px;">
+<img align="right" src="./resources/Multitensor.png" width="50%" style="padding-top: 20px;">
 
 ### Multitensors
 
@@ -1055,7 +1055,7 @@ If you'd like to cite this blog post, use the following entry:
 	author = {Isaac Liao and Albert Gu},
 	title = {ARC-AGI Without Pretraining},
 	year = {2025},
-	url = {https://iliao2345.github.io/blog_posts/arc_agi_without_pretraining/arc_agi_without_pretraining.md},
+	url = {https://iliao2345.github.io/blog_posts/arc_agi_without_pretraining/arc_agi_without_pretraining.html},
 }
 ```
 
