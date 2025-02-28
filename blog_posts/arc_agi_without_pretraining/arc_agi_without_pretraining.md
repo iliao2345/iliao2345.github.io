@@ -140,7 +140,7 @@ We first realize that the input is divided into boxes, and the boxes are still t
   <tr>
   <td width="50%">
   <strong> 50 steps of learning:</strong>
-  <br></br>
+  <br><br/>
   The network, given random input $z$, outputted an answer grid (sample) with light blue rows/columns wherever the input has the same. The network noticed that all the other input-output pairs in the puzzle exhibit this correspondence. The network doesn't know how the other output pixels are assigned colors; an exponential moving average of the network output (sample average) shows the network assigning mostly the same average color to non-light-blue pixels.
   </td>
   <td width="50%"><img align="right" src="./resources/272f95fa_at_50_steps.png"></td>
@@ -148,7 +148,7 @@ We first realize that the input is divided into boxes, and the boxes are still t
   <tr>
   <td width="50%">
   <strong> 150 steps of learning:</strong>
-  <br></br>
+  <br><br/>
   The network outputs a grid where nearby pixels have similar colors. The network has likely noticed that this is common among all the outputs, and is guessing that it applies to the answer too.
   </td>
   <td width="50%"><img align="right" src="./resources/272f95fa_at_150_steps.png"></td>
@@ -156,7 +156,7 @@ We first realize that the input is divided into boxes, and the boxes are still t
   <tr>
   <td width="50%">
   <strong> 200 steps of learning:</strong>
-  <br></br>
+  <br><br/>
   The network output now shows larger blobs of colors that are cut off by the light blue borders. The network has noticed the common usage of borders to demarcate blobs of colors in other outputs, and applies the same idea here. The network has also noticed black corner blobs in other given outputs, which the network imitates.
   </td>
   <td width="50%"><img align="right" src="./resources/272f95fa_at_200_steps.png"></td>
@@ -164,7 +164,7 @@ We first realize that the input is divided into boxes, and the boxes are still t
   <tr>
   <td width="50%">
   <strong> 350 steps of learning:</strong>
-  <br></br>
+  <br><br/>
   The network output now shows the correct colors assigned to boxes of the correct direction from the center. The network has realized that a single color-to-direction mapping is used to pick the blob colors in the other given outputs, so it imitates this mapping. It is still not the best at coloring within the lines, and it's also confused about the center blob, probably because the middle does not correspond to a direction. Nevertheless, the averate network output does show a tinge of the correct magenta color in the middle, meaning the network is catching on. The most common answer guess from the network does actually have magenta in the middle.
   </td>
   <td width="50%"><img align="right" src="./resources/272f95fa_at_350_steps.png"></td>
@@ -172,7 +172,7 @@ We first realize that the input is divided into boxes, and the boxes are still t
   <tr>
   <td width="50%">
   <strong> 1500 steps of learning:</strong>
-  <br></br>
+  <br><br/>
   The network is as refined as it will ever be. Sometimes it will still make a mistake in the sample it outputs, but this uncommon and filtered out.
   </td>
   <td width="50%"><img align="right" src="./resources/272f95fa_at_1500_steps.png"></td>
@@ -607,7 +607,7 @@ We can look at the average output of the [decoding layer](#decoding-layer) corre
   <tr>
   <td width="50%">
   <strong> (Examples, height, channel) tensor:</strong>
-  <br></br>
+  <br><br/>
   For every example and row, there is a vector of dimension $n\_channels$. This forms a dataset of vectors. Taking the PCA of these vectors, the top principal component vector reformatted back into an (examples, height) matrix (shown on right) can tell us which examples/row combinations are uniquely identified by the stored information. The top principal component (shown on right) is 1485 times stronger than the second principal component, which indicates to us that basically all of the information is in the above tensor. <strong>For every example, the two brightest pixels give the rows where the light blue rows in the grids are.</strong>
   </td>
   <td width="50%"><img align="right" src="./resources/272f95fa_example_height_component_0.png"></td>
@@ -615,7 +615,7 @@ We can look at the average output of the [decoding layer](#decoding-layer) corre
   <tr>
   <td width="50%">
   <strong> (Examples, width, channel) tensor:</strong>
-  <br></br>
+  <br><br/>
   A very similar story here: in the top principal component of this tensor, <strong>the two darkest pixels for every example give the columns where the light blue columns in the grids are.</strong> The top principal component is 1253 times stronger than the next principal component.
   </td>
   <td width="50%"><img align="right" src="./resources/272f95fa_example_width_component_0.png"></td>
@@ -623,7 +623,7 @@ We can look at the average output of the [decoding layer](#decoding-layer) corre
   <tr>
   <td width="50%">
   <strong> (Direction, color, channel) tensor:</strong>
-  <br></br>
+  <br><br/>
   In this tensor, we see that the four brightest pixels identify blue with up, green with left, red with down, and yellow with right. <strong>This tensor seems to tell each direction which color to use for the opposite direction's corresponding box.</strong> The top principal component is 829 times stronger than the next principal component.
   </td>
   <td width="50%"><img align="right" src="./resources/272f95fa_color_direction_component_0.png"></td>
@@ -631,7 +631,7 @@ We can look at the average output of the [decoding layer](#decoding-layer) corre
   <tr>
   <td width="50%">
   <strong> (Color, channel) tensor:</strong>
-  <br></br>
+  <br><br/>
   Here, we look at the top three principal components, since the first and second principal components are 134 and 87 times stronger than the third component, indicating that they play a role while the third component does not. The <strong>magenta and light blue colors</strong> are uniquely identified, indicating their special usage amongst the rest of the colors as <strong>the center color and the color of the row/column divisions</strong>, respectively.
   </td>
   <td width="50%"><img align="right" src="./resources/272f95fa_color_component_0.png"><img align="right" src="./resources/272f95fa_color_component_1.png"></td>
@@ -892,7 +892,7 @@ Our mental model of how gradient descent compresses the $z$ information consists
 
 These steps happen repeatedly for different unnecessarily coded pieces of information, until there are no more. More than one piece of information can be compressed away at once, and there is no need for the steps to proceed serially. The process stops when all information coded by the posterior is unique, and no piece is reconstructable using the others.
 
-<br></br>
+<br/><br/>
 
 ## Additional Case Studies
 
@@ -916,7 +916,7 @@ We first realize that the input is red and black, and the output is also red and
   <tr>
   <td width="50%">
   <strong> 50 steps of learning:</strong>
-  <br></br>
+  <br><br/>
   The average of sampled outputs shows that light blue pixels in the input are generally preserved in the output. However, black pixels in the input are haphazardly and randomly colored light blue and red. The network does not seem to know that the colored input/output pixels lie within some kind of bounding box, or that the bounding box is the same for the input and output grids.
   </td>
   <td width="50%"><img align="right" src="./resources/6d75e8bb_at_50_steps.png"></td>
@@ -924,7 +924,7 @@ We first realize that the input is red and black, and the output is also red and
   <tr>
   <td width="50%">
   <strong> 100 steps of learning:</strong>
-  <br></br>
+  <br><br/>
   The average of sampled outputs shows red pixels confined to an imaginary rectangle surrounding the light blue pixels. The network seems to have perceived that other examples use a common bounding box for the input and output pixels, but is not completely sure about where the boundary lies and what colors go inside the box in the output.
   </td>
   <td width="50%"><img align="right" src="./resources/6d75e8bb_at_100_steps.png"></td>
@@ -932,7 +932,7 @@ We first realize that the input is red and black, and the output is also red and
   <tr>
   <td width="50%">
   <strong> 150 steps of learning:</strong>
-  <br></br>
+  <br><br/>
   The average of sampled outputs shows almost all of the pixels in the imaginary bounding box to be colored red. The network has figured out the answer, and further training only refines the answer.
   </td>
   <td width="50%"><img align="right" src="./resources/6d75e8bb_at_150_steps.png"></td>
@@ -955,7 +955,7 @@ We can look at the average output of the [decoding layer](#decoding-layer) for t
   <tr>
   <td width="50%">
   <strong> (Examples, height, channel) tensor:</strong>
-  <br></br>
+  <br><br/>
   The first principal component is 771 times stronger than the second principal component. <strong>A brighter pixel indicates a row with more light blue pixels.</strong> It is unclear how the network knows where the borders of the bounding box are.
   </td>
   <td width="50%"><img align="right" src="./resources/6d75e8bb_example_height_component_0.png"></td>
@@ -963,7 +963,7 @@ We can look at the average output of the [decoding layer](#decoding-layer) for t
   <tr>
   <td width="50%">
   <strong> (Examples, width, channel) tensor:</strong>
-  <br></br>
+  <br><br/>
   The first principal component is 550 times stronger than the second principal component. <strong>A darker pixel indicates a column with more light blue pixels.</strong> It is unclear how the network knows where the borders of the bounding box are.
   </td>
   <td width="50%"><img align="right" src="./resources/6d75e8bb_example_width_component_0.png"></td>
@@ -971,14 +971,14 @@ We can look at the average output of the [decoding layer](#decoding-layer) for t
   <tr>
   <td width="50%">
   <strong> (Color, channel) tensor:</strong>
-  <br></br>
+  <br><br/>
   This tensor serves to distinguish the roles of the two colors apart.
   </td>
   <td width="50%" align="center"><img align="center" src="./resources/6d75e8bb_color_component_0.png" width="50%"></td>
   </tr>
 </table>
 
-<br></br>
+<br/><br/>
 
 ### Case Study: Center Cross
 
@@ -1006,7 +1006,7 @@ The only surviving tensors are the $(color, channel)$ and $(example, height, wid
   <tr>
   <td width="50%">
   <strong> (Examples, height, width, channel) tensor:</strong>
-  <br></br>
+  <br><br/>
   The top principal component is 2496 times stronger than the second principal component. <strong>The (examples, height, width, channel) tensor codes for the centers of the bubbles.</strong> In the KL contribution plot, we can see that the information content of this tensor is decreasing over time. Likely, the network is in the process of eliminating the plus shaped representation, and replacing it with a pixel instead, which takes fewer bits.
   </td>
   <td width="50%"><img align="right" src="./resources/41e4d17e_example_height_width_component_0.png"></td>
@@ -1014,7 +1014,7 @@ The only surviving tensors are the $(color, channel)$ and $(example, height, wid
   <tr>
   <td width="50%">
   <strong> (Color, channel) tensor:</strong>
-  <br></br>
+  <br><br/>
   The (color, channel) tensor just serves to distinguish the individual roles of the colors in the puzzle.
   </td>
   <td width="50%"><img align="right" src="./resources/41e4d17e_color_component_0.png"><img align="right" src="./resources/41e4d17e_color_component_1.png"></td>
@@ -1024,7 +1024,7 @@ The only surviving tensors are the $(color, channel)$ and $(example, height, wid
 
 [^8]: We penalize the reconstruction error by 10x the KL for $z$, in the total KL loss. This isn't detrimental to the measurement of the total KL because the KL term for $z$ can absorb all of the coded information from the reconstruction term, which can then go to zero. Since the term for $z$ is not penalized by any extra factor, the total KL we end up with is then unaffected. We believe this empirically helps because the Gaussians we use for $z$ are not as efficient for storing bits that can be recovered, as the categorical distributions that define the log likelihood in the reconstruction error. Forcing all the coded bits into one storage mode removes pathologies introduced by multiple storage modes.
 
-<br></br>
+<br/><br/>
 
 ## List of Mentioned ARC-AGI Puzzles
 
@@ -1043,7 +1043,7 @@ All the puzzles we mentioned are part of the training split.
 | 6d75e8bb | ![image](./resources/6d75e8bb_problem.png) | 7b6016b9 | ![image](./resources/7b6016b9_problem.png) |
 | ce9e57f2 | ![image](./resources/ce9e57f2_problem.png) |          |                           |
 
-<br></br>
+<br/><br/>
 
 ## Code
 
