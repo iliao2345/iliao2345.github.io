@@ -13,6 +13,8 @@ tags:
 <br/><br/>
 <a name="topofpage"></a>![image](./resources/teaser_figure_w_title.png)
 
+<br/><br/>
+
 This project's aim is to revitalize the niche perspective in machine learning that **lossless information compression is sufficient to produce intelligent behavior**. Although researchers have long speculated that efficient compression is at the heart of intelligence (see, e.g., [Hernández-Orallo & Minaya-Collado, 1998](https://www.researchgate.net/publication/2472570_A_Formal_Definition_of_Intelligence_Based_on_an_Intensional_Variant_of_Algorithmic_Complexity); [Mahoney, 1999](https://gwern.net/doc/cs/algorithm/information/compression/1999-mahoney.pdf); [Hutter, 2005](https://link.springer.com/book/10.1007/b138233); [Legg & Hutter, 2007](https://arxiv.org/abs/0712.3329)), this idea flew under the radar because it has struggled to directly yield scalable algorithms. We tried leveraging information compression to solve the data-limited [ARC-AGI challenge](https://arcprize.org/), and developed a method that achieves 20% on the evaluation set, with the following properties:
 
 - **No pretraining**; models are randomly initialized and trained during test time.
@@ -111,7 +113,7 @@ The ARC Prize team has repeatedly launched competitions for solving ARC-AGI, wit
 
 # Our Solution Method
 
-<img align="right" src="./resources/algorithm_environment.JPG" width="50%" style="padding-top: 20px;">
+<img align="right" src="./resources/algorithm_environment.JPG" width="50%" style="margin: 20px 0 20px 10px;">
 
 **We believe lossless information compression schemes can be used as programs for solving ARC-AGI. The more bit-efficient the compression scheme, the "smarter" the answer and the more correct it is, and with enough bit efficiency we can eventually get the right answer.** To solve a set of ARC-AGI puzzles, we find the smallest possible bit string that when decompressed, exactly produces the set of target puzzles, but with any answers filled in. Those are our answer guesses. The main challenge is to find a bit-efficient encoder-decoder system where the encoder doesn't need any answers as input to make the bit string. Our method for solving ARC-AGI uses a **training algorithm** and a **neural network forward pass** as the **encoder** and **decoder**, respectively, and the compressed bit representation contains learned parameters such as the weights and inputs for the network.
 
@@ -243,7 +245,7 @@ We designed our own neural network architecture for decoding the latents $z$ int
 
 There are too many equivariances for us to think about at once, so we decided to make a **base architecture that's fully symmetric**, and break unwanted symmetries one by one by **adding asymmetric layers** to give it [specific non-equivariant abilities](#what-puzzles-can-and-cant-we-solve).
 
-![image](./resources/Equivariant_Architecture.png)
+<img src="./resources/Equivariant_Architecture.png" style="margin: 20px 0 20px 0;">
 
 To illustrate what we mean, suppose that both $z$ and an ARC-AGI puzzle take the form of a tensor of shape $[n\\_examples, n\\_colors, height, width, 2 \text{ for input/output}]$ (This is not actually the format of the data (see [multitensors](#multitensors)) but it gets the idea across best.) Then, our network starts out as equivariant to permutations of indices in the $example$, $color$, $height$, and $width$ dimensions. Some extra care must be taken with weight sharing, to force the network to also be equivariant to swapping the $width$ and $height$ dimensions. We may then add a layer involving a roll by one in the $width$ and $height$ dimensions, to let the network distinguish short range spatial interactions but not long-range ones.
 
@@ -251,11 +253,11 @@ To illustrate what we mean, suppose that both $z$ and an ARC-AGI puzzle take the
 
 The actual data ($z$, hidden activations, and puzzles) passing through our layers comes in a format that we call a "**multitensor**", which is just a bucket of tensors of various shapes. All the equivariances can be described in terms of how they change a multitensor. **In order to understand any of the layers we list, you must first read the below section on multitensors.**
 
-<img align="right" src="./resources/Multitensor.png" width="50%" style="padding-top: 20px;">
+<img align="right" src="./resources/Multitensor.png" width="50%" style="margin: 20px 0 20px 10px;">
 
 ### Multitensors
 
-Most common classes of machine learning architectures operate on a single type of tensor with constant rank. LLMs operate on rank 3 tensors of shape $[n\\_batch, n\\_tokens, n\\_channels]$, and CNNs operate on a rank 4 tensors of shape $[n\\_batch, n\\_channels, height, width]$. Our multitensors are a set of varying-rank tensors of unique type, whose dimensions are a subset of a rank 6 tensor of shape $[n\\_examples, n\\_colors, n\\_directions, height, width, n\\_channels]$. We always keep the channel dimension, so there are at most 32 tensors in every multitensor. We also maintain [several rules](#rules-for-legal-multitensors) that determine whether a tensor shape is "legal" or not, which reduces the number of tensors in a multitensor to 18.
+Most common classes of machine learning architectures operate on a single type of tensor with constant rank. LLMs operate on rank 3 tensors of shape $[n\\_batch, n\\_tokens, n\\_channels]$, and CNNs operate on a rank 4 tensors of shape $[n\\_batch, n\\_channels, height, width]$. Our multitensors are a set of varying-rank tensors of unique type, whose dimensions are a subset of a rank 6 tensor of shape $[n\\_examples$, $n\\_colors$, $n\\_directions$, $height$, $width$, $n\\_channels]$. We always keep the channel dimension, so there are at most 32 tensors in every multitensor. We also maintain [several rules](#rules-for-legal-multitensors) that determine whether a tensor shape is "legal" or not, which reduces the number of tensors in a multitensor to 18.
 
 | Dimension | Size                                                                                                                             |
 | --------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -751,7 +753,7 @@ We compute the information content of $z$ as the KL divergence between the distr
 
 Finally, we postprocess the noisy $z$ by scaling it by the sigmoid of the signal-to-noise ratio.[^14] This ensures that $z$ is kept as-is when its variance consists mostly of useful information and it is nearly zero when its variance consists mostly of noise. All this is done 4 times to make a channel dimension of 4. Then we apply a projection (with different weights per tensor in the multitensor, ie. per-tensor projections) mapping the channel dimension up to the dimension of the residual stream.
 
-<img align="right" src="./resources/Multitensor_Sharing.png"  width="50%">
+<img align="right" src="./resources/Multitensor_Sharing.png"  width="50%" style="margin: 20px 0 20px 10px;">
 
 #### Multitensor Communication Layer
 
@@ -796,7 +798,7 @@ We normalize all the tensors in the multitensor, using means and variances compu
 
 We must take the final multitensor, and convert it to the format of an ARC-AGI puzzle. More specifically, we must convert the multitensor into a distribution over ARC-AGI puzzles, so that we can compute the log-likelihood of the observed grids in the puzzle.
 
-<img align="right" src="./resources/Linear_heads.png"  width="50%">
+<img align="right" src="./resources/Linear_heads.png"  width="50%" style="margin: 20px 0 20px 10px;">
 
 The colors of every pixel for every example for both input and output, have logits defined by the $[examples, colors, height, width, channel]$ tensor, with the channel dimension linearly mapped down to a size of 2, representing the input and output grids.[^17] The log-likelihood is given by the crossentropy, with sum reduction across all the grids.
 
