@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /arc_agi_without_pretraining.md
+Disallow: /arc_agi_without_pretraining.html
