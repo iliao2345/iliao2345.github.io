@@ -129,7 +129,7 @@ tags:
     position: fixed;
     left: 0;
     top: 0;
-    width: 300px;
+    width: 250px;
     height: 100%;
     background: #f4f4f4;
     padding: 15px;
@@ -161,10 +161,10 @@ tags:
 
   /* Main content area; adjust the margin to leave room for the sidebar */
   #content {
-    margin-left: 320px;
+    margin-left: 270px;
     padding: 15px;
     width: calc(100%-270px);
-    max-width: 900px;
+    max-width: 1600px;
     box-sizing: border-box;
   }
   @media (max-width: 768px) {
