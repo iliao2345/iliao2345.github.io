@@ -15,6 +15,7 @@ By <a href="https://iliao2345.github.io/">Isaac Liao</a> and <a href="https://go
 
 <br>
 
+---
 In this blog post, we aim to answer a simple yet fundamental question:
 
 **Can lossless information compression by itself produce intelligent behavior?**
@@ -30,7 +31,7 @@ In this work, we give evidence that lossless compression during inference time i
 Despite these constraints, our method achieves 34.75% on the training set and 20% on the evaluation set—processing each puzzle in roughly 20 minutes on an RTX 4070. To our knowledge, this is the first neural method for solving ARC-AGI where the training data is limited to just the target puzzle. Our network's intelligence emerges not from pretraining, vast datasets, exhaustive search, or massive compute—but from compression. We challenge the conventional reliance on extensive pretraining and data, and propose a future where tailored compressive objectives and efficient inference-time computation work together to extract deep intelligence from minimal input.
 
 
-<br/><br/>
+<br>
 ---
 
 # Table of Contents
@@ -89,7 +90,7 @@ Despite these constraints, our method achieves 34.75% on the training set and 20
     - [Code](#code)
 
 
-<br/><br/>
+<br>
 ---
 
 # What is ARC-AGI?
@@ -110,7 +111,7 @@ The 400 training puzzles are easier than the rest, and are meant to help you lea
 
 The ARC Prize team has repeatedly launched competitions for solving ARC-AGI, with monetary rewards. [The most recent competition](https://www.kaggle.com/competitions/arc-prize-2024) involved potential prizes and awards of upwards of **$1,000,000**, with the main prize reserved for methods which could achieve 85% on a private test set of 100 puzzles, using 12 hours of compute in a constrained environment.
 
-<br/><br/>
+<br>
 ---
 
 # Our Solution Method
@@ -187,7 +188,7 @@ We first realize that the input is divided into boxes, and the boxes are still t
 
 After training, [we can deconstruct the learned z distribution](#solution-analysis-color-the-boxes) to find that it codes for a color-direction correspondence table and row/column divider positions!
 
-<br/><br/>
+<br>
 ---
 
 # How to Derive Our Solution Method
@@ -236,7 +237,7 @@ At this point, we observe that the total code length for $s$ that we described i
 
 [^3]: A lot of caveats/issues are introduced by using REC. The code length when using REC only behaves in some limits and expectations, there may be a small added constant to the code length, the decoding may be approximate, etc. We're not up to date with the current literature, and we're ignoring all the sticky problems that may arise and presuming that they are all solved. We will never end up running Relative Entropy Coding anyways, so it doesn't matter that it takes runtime exponential in the code length. We only need to make use of the the fact that such algorithms exist, not that they run fast, nor that we can implement them, in order to derive our method.
 
-<br/><br/>
+<br>
 ---
 
 # Architecture
@@ -292,7 +293,7 @@ A final note on the $channel$ dimension: usually when talking about a tensor's s
 	- [Normalization Layer](#normalization-layer)
 - [Linear Heads](#linear-heads)
 
-<br/><br/>
+<br>
 ---
 
 # Results
@@ -575,7 +576,7 @@ A short list of abilities that **cannot** be performed by our network includes:
 - Planning, simulating the behavior of an agent (see puzzle [2dd70a9a](#list-of-mentioned-arc-agi-puzzles))
 - Long range extensions of patterns (see puzzle 28e73c20 above)
 
-<br/><br/>
+<br>
 ---
 
 # Case Study: Color the Boxes
@@ -642,7 +643,7 @@ We can look at the average output of the [decoding layer](#decoding-layer) corre
   </tr>
 </table>
 
-<br/><br/>
+<br>
 ---
 
 # How to Improve Our Work
@@ -687,7 +688,7 @@ We implemented a mechanism to keep the KL above a minimum threshold so that the 
 We don't use it, but maybe it would help. Regularization is a way to measure the complexity of $f$ in our [problem formulation](#how-to-derive-our-solution-method).
 
 
-<br/><br/>
+<br>
 ---
 
 # Related Work
@@ -734,7 +735,7 @@ Our equivariance structures are inspired by [permutation-invariant neural networ
 <br/><br/>
 
 ---
-<br/><br/>
+<br>
 
 # Appendix
 
@@ -1066,7 +1067,7 @@ If you'd like to cite this blog post, use the following entry:
 
 [^19]: The two masks for the input and output are combined together to make one mask for use in these operations, since the $channel$ dimension in these operations don't necessarily correspond to the input and output grids.
 
-<br/><br/>
+<br>
 ---
 
 <script type="text/javascript" id="MathJax-script" async
