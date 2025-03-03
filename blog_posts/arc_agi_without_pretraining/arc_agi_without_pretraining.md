@@ -12,9 +12,6 @@ tags:
 ---
 <a name="topofpage"></a>![image](./resources/teaser_figure_w_title.png)
 By <a href="https://iliao2345.github.io/">Isaac Liao</a> and <a href="https://goombalab.github.io/">Albert Gu</a>
-
-<br>
-
 ---
 In this blog post, we aim to answer a simple yet fundamental question:
 
