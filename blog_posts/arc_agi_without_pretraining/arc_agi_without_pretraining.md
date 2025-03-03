@@ -9,7 +9,7 @@ tags:
   - compression
   - information
   - equivariance
- 
+--- 
 <div id="sidebar">
   <h2>Table of Contents</h2>
   <ul>
@@ -161,7 +161,6 @@ tags:
 </style>
 
 <div id="content">
----
 <a name="topofpage"></a>![image](./resources/teaser_figure_w_title.png)
 By <a href="https://iliao2345.github.io/">Isaac Liao</a> and <a href="https://goombalab.github.io/">Albert Gu</a>
 
