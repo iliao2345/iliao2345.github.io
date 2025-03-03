@@ -125,14 +125,6 @@ tags:
 
 <style>
   /* Sidebar styling */
-  @media (max-width: 768px) {
-    #sidebar {
-      display: none;
-    }
-    #content {
-      margin-left: 0;
-    }
-  }
   #sidebar {
     position: fixed;
     left: 0;
@@ -160,11 +152,29 @@ tags:
   #sidebar ul ul ul ul {
     padding-left: 25px; /* Indent for nested lists */
   }
+  #sidebar li a {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
   /* Main content area; adjust the margin to leave room for the sidebar */
   #content {
     margin-left: 320px;
     padding: 15px;
+    width: calc(100%-270px);
+    max-width: 900px;
+    box-sizing: border-box;
+  }
+  @media (max-width: 768px) {
+    #sidebar {
+      display: none;
+    }
+    #content {
+      margin-left: 0;
+      width: 100%;
+    }
   }
 </style>
 
