@@ -10,24 +10,24 @@ tags:
   - information
   - equivariance
 ---
-<br/><br/>
 <a name="topofpage"></a>![image](./resources/teaser_figure_w_title.png)
+By <a href="https://iliao2345.github.io/">Isaac Liao</a> and <a href="https://goombalab.github.io/">Albert Gu</a>
 
-<br/><br/>
+<br>
 
 In this blog post, we aim to answer a simple yet fundamental question:
 
 **Can lossless information compression by itself produce intelligent behavior?**
 
-Although researchers have long speculated that efficient compression is at the heart of intelligence (see, e.g., [Hernández-Orallo & Minaya-Collado, 1998](https://www.researchgate.net/publication/2472570_A_Formal_Definition_of_Intelligence_Based_on_an_Intensional_Variant_of_Algorithmic_Complexity); [Mahoney, 1999](https://gwern.net/doc/cs/algorithm/information/compression/1999-mahoney.pdf); [Hutter, 2005](https://link.springer.com/book/10.1007/b138233); [Legg & Hutter, 2007](https://arxiv.org/abs/0712.3329)), this idea flew under the radar because it struggled to yield scalable algorithms.
+The idea that efficient compression by itself lies at the heart of intelligence is not new (see, e.g., [Hernández-Orallo & Minaya-Collado, 1998](https://www.researchgate.net/publication/2472570_A_Formal_Definition_of_Intelligence_Based_on_an_Intensional_Variant_of_Algorithmic_Complexity); [Mahoney, 1999](https://gwern.net/doc/cs/algorithm/information/compression/1999-mahoney.pdf); [Hutter, 2005](https://link.springer.com/book/10.1007/b138233); [Legg & Hutter, 2007](https://arxiv.org/abs/0712.3329)). Rather than revisiting those theoretical discussions, we make a practical demonstration instead.
 
-In this work, we give evidence that lossless compression during inference time is sufficient, by developing a method **purely based on compression** that performs well on the [ARC-AGI challenge](https://arcprize.org/), a dataset of IQ-test-like puzzles about inferring a procedure/rule from limited demonstrations. Crucially, our solution obeys the following three restrictions:
+In this work, we give evidence that lossless compression during inference time is sufficient to produce intelligent behavior, by developing a method **purely based on compression** that performs well on the [ARC-AGI challenge](https://arcprize.org/), a dataset of IQ-test-like puzzles about inferring a procedure/rule from limited demonstrations. Crucially, our solution obeys the following three restrictions:
 
 - **No pretraining**; models are randomly initialized and trained during inference time.
 - **No dataset**; one model trains on just the target ARC-AGI puzzle and outputs one answer.
 - **No search**, in most senses of the word—just gradient descent.
 
-Despite these constraints, our method achieves 34.75% on the training set and 20% on the evaluation set—processing each puzzle in roughly 20 minutes on an RTX 4070. To our knowledge, this is the first neural method for solving ARC-AGI where the training data is limited to just the target puzzle. Our network's intelligence emerges not from pretraining, vast datasets, exhaustive search, or massive compute—but from compression. We challenge the conventional reliance on extensive pretraining and data, and propose a future where tailor compressive objectives and efficient inference-time computation work together to extract deep intelligence from minimal input.
+Despite these constraints, our method achieves 34.75% on the training set and 20% on the evaluation set—processing each puzzle in roughly 20 minutes on an RTX 4070. To our knowledge, this is the first neural method for solving ARC-AGI where the training data is limited to just the target puzzle. Our network's intelligence emerges not from pretraining, vast datasets, exhaustive search, or massive compute—but from compression. We challenge the conventional reliance on extensive pretraining and data, and propose a future where tailored compressive objectives and efficient inference-time computation work together to extract deep intelligence from minimal input.
 
 
 <br/><br/>
