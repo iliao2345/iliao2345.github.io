@@ -292,7 +292,7 @@ We first realize that the input is divided into boxes, and the boxes are still t
   <td width="50%">
   <strong> 350 steps of learning:</strong>
   <br><br/>
-  The network output now shows the correct colors assigned to boxes of the correct direction from the center. The network has realized that a single color-to-direction mapping is used to pick the blob colors in the other given outputs, so it imitates this mapping. It is still not the best at coloring within the lines, and it's also confused about the center blob, probably because the middle does not correspond to a direction. Nevertheless, the averate network output does show a tinge of the correct magenta color in the middle, meaning the network is catching on. The most common answer guess from the network does actually have magenta in the middle.
+  The network output now shows the correct colors assigned to boxes of the correct direction from the center. The network has realized that a single color-to-direction mapping is used to pick the blob colors in the other given outputs, so it imitates this mapping. It is still not the best at coloring within the lines, and it's also confused about the center blob, probably because the middle does not correspond to a direction. Nevertheless, the averate network output does show a tinge of the correct magenta color in the middle, meaning the network is catching on.
   </td>
   <td width="50%"><img align="right" src="./resources/272f95fa_at_350_steps.png"></td>
   </tr>
@@ -1050,7 +1050,7 @@ We first realize that the input is red and black, and the output is also red and
   <td width="50%">
   <strong> 100 steps of learning:</strong>
   <br><br/>
-  The average of sampled outputs shows red pixels confined to an imaginary rectangle surrounding the light blue pixels. The network seems to have perceived that other examples use a common bounding box for the input and output pixels, but is not completely sure about where the boundary lies and what colors go inside the box in the output.
+  The average of sampled outputs shows red pixels confined to an imaginary rectangle surrounding the light blue pixels. The network seems to have perceived that other examples use a common bounding box for the input and output pixels, but is not completely sure about where the boundary lies and what colors go inside the box in the output. Nevertheless, guess 2 (the second most frequently sampled output) shows that the correct answer is already being sampled quite often now.
   </td>
   <td width="50%"><img align="right" src="./resources/6d75e8bb_at_100_steps.png"></td>
   </tr>
