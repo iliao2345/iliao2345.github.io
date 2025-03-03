@@ -132,7 +132,7 @@ tags:
     width: 250px;
     height: 100%;
     background: #f4f4f4;
-    padding: 15px;
+    padding: 25px;
     overflow-y: auto;
     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
   }
@@ -160,6 +160,7 @@ tags:
   }
 </style>
 
+<div id="content" markdown="1">
 <a name="topofpage"></a>![image](./resources/teaser_figure_w_title.png)
 By <a href="https://iliao2345.github.io/">Isaac Liao</a> and <a href="https://goombalab.github.io/">Albert Gu</a>
 
@@ -1159,6 +1160,7 @@ If you'd like to cite this blog post, use the following entry:
 
 <br>
 ---
+</div>
 
 <script type="text/javascript" id="MathJax-script" async
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
