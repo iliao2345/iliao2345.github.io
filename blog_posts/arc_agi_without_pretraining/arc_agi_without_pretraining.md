@@ -125,14 +125,22 @@ tags:
 
 <style>
   /* Sidebar styling */
+  @media (max-width: 768px) {
+    #sidebar {
+      display: none;
+    }
+    #content {
+      margin-left: 0;
+    }
+  }
   #sidebar {
     position: fixed;
     left: 0;
     top: 0;
-    width: 250px;
+    width: 300px;
     height: 100%;
     background: #f4f4f4;
-    padding: 25px;
+    padding: 15px;
     overflow-y: auto;
     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
   }
@@ -155,8 +163,8 @@ tags:
 
   /* Main content area; adjust the margin to leave room for the sidebar */
   #content {
-    margin-left: 280px;
-    padding: 25px;
+    margin-left: 320px;
+    padding: 15px;
   }
 </style>
 
