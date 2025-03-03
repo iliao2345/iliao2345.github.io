@@ -9,6 +9,158 @@ tags:
   - compression
   - information
   - equivariance
+ 
+<div id="sidebar">
+  <h2>Table of Contents</h2>
+  <ul>
+    <li><a href="#what-is-arc-agi">What is ARC-AGI?</a></li>
+    <li>
+      <a href="#our-solution-method">Our Solution Method</a>
+      <ul>
+        <li><a href="#watching-the-network-learn-color-the-boxes">Watching the Network Learn: Color the Boxes</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#how-to-derive-our-solution-method">How to Derive Our Solution Method</a>
+      <ul>
+        <li><a href="#a-primer-on-lossless-information-compression">A Primer on Lossless Information Compression</a></li>
+        <li><a href="#one-size-fits-all-compression">One-Size-Fits-All Compression</a></li>
+        <li><a href="#neural-networks-to-the-rescue">Neural Networks to the Rescue</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#architecture">Architecture</a>
+      <ul>
+        <li><a href="#multitensors">Multitensors</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#results">Results</a>
+      <ul>
+        <li><a href="#what-puzzles-can-and-cant-we-solve">What Puzzles Can and Can't We Solve?</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#case-study-color-the-boxes">Case Study: Color the Boxes</a>
+      <ul>
+        <li><a href="#solution-analysis-color-the-boxes">Solution Analysis: Color the Boxes</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#how-to-improve-our-work">How to Improve Our Work</a>
+      <ul>
+        <li><a href="#joint-compression-via-weight-sharing-between-puzzles">Joint Compression via Weight Sharing Between Puzzles</a></li>
+        <li><a href="#convolution-like-layers-for-shape-copying-tasks">Convolution-like Layers for Shape Copying Tasks</a></li>
+        <li><a href="#kl-floor-for-posterior-collapse">KL Floor for Posterior Collapse</a></li>
+        <li><a href="#regularization">Regularization</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#related-work">Related Work</a>
+      <ul>
+        <li><a href="#equivalence-of-compression-and-intelligence">Equivalence of Compression and Intelligence</a></li>
+        <li><a href="#information-theory-and-coding-theory">Information Theory and Coding Theory</a></li>
+        <li><a href="#variational-autoencoders">Variational Autoencoders</a></li>
+        <li><a href="#arc-agi-methods">ARC-AGI Methods</a></li>
+        <li><a href="#deep-learning-achitectures">Deep Learning Achitectures</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#appendix">Appendix</a>
+      <ul>
+        <li>
+          <a href="#layers-in-the-architecture">Layers in the Architecture</a>
+          <ul>
+            <li><a href="#decoding-layer">Decoding Layer</a></li>
+            <li><a href="#multitensor-communication-layer">Multitensor Communication Layer</a></li>
+            <li><a href="#softmax-layer">Softmax Layer</a></li>
+            <li><a href="#directional-cummaxshift-layer">Directional Cummax/Shift Layer</a></li>
+            <li><a href="#directional-communication-layer">Directional Communication Layer</a></li>
+            <li><a href="#nonlinear-layer">Nonlinear Layer</a></li>
+            <li><a href="#normalization-layer">Normalization Layer</a></li>
+            <li><a href="#linear-heads">Linear Heads</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#other-architectural-details">Other Architectural Details</a>
+          <ul>
+            <li><a href="#rules-for-legal-multitensors">Rules for legal multitensors</a></li>
+            <li><a href="#weight-tying-for-reflectionrotation-symmetry">Weight Tying for Reflection/Rotation Symmetry</a></li>
+            <li><a href="#training">Training</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#preprocessing">Preprocessing</a>
+          <ul>
+            <li><a href="#output-shape-determination">Output Shape Determination</a></li>
+            <li><a href="#number-of-colors">Number of Colors</a></li>
+          </ul>
+        </li>
+        <li><a href="#postprocessing">Postprocessing</a></li>
+        <li><a href="#what-happens-to-the-representations-during-learning">What Happens to the Representations during Learning</a></li>
+        <li>
+          <a href="#additional-case-studies">Additional Case Studies</a>
+          <ul>
+            <li>
+              <a href="#case-study-bounding-box">Case Study: Bounding Box</a>
+              <ul>
+                <li><a href="#watching-the-network-learn-bounding-box">Watching the Network Learn: Bounding Box</a></li>
+                <li><a href="#solution-analysis-bounding-box">Solution Analysis: Bounding Box</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="#case-study-center-cross">Case Study: Center Cross</a>
+              <ul>
+                <li><a href="#solution-analysis-center-cross">Solution Analysis: Center Cross</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#list-of-mentioned-arc-agi-puzzles">List of Mentioned ARC-AGI Puzzles</a></li>
+        <li><a href="#code">Code</a></li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<style>
+  /* Sidebar styling */
+  #sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 250px;
+    height: 100%;
+    background: #f4f4f4;
+    padding: 15px;
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  }
+  #sidebar h2 {
+    margin-top: 0;
+  }
+  #sidebar ul {
+    list-style: none;
+    padding-left: 10px;
+  }
+  #sidebar ul ul {
+    padding-left: 15px; /* Indent for nested lists */
+  }
+  #sidebar ul ul ul {
+    padding-left: 20px; /* Indent for nested lists */
+  }
+  #sidebar ul ul ul ul {
+    padding-left: 25px; /* Indent for nested lists */
+  }
+
+  /* Main content area; adjust the margin to leave room for the sidebar */
+  #content {
+    margin-left: 280px;
+    padding: 25px;
+  }
+</style>
+
+<div id="content">
 ---
 <a name="topofpage"></a>![image](./resources/teaser_figure_w_title.png)
 By <a href="https://iliao2345.github.io/">Isaac Liao</a> and <a href="https://goombalab.github.io/">Albert Gu</a>
@@ -28,65 +180,6 @@ In this work, we give evidence that lossless compression during inference time i
 - **No search**, in most senses of the word—just gradient descent.
 
 Despite these constraints, our method achieves 34.75% on the training set and 20% on the evaluation set—processing each puzzle in roughly 20 minutes on an RTX 4070. To our knowledge, this is the first neural method for solving ARC-AGI where the training data is limited to just the target puzzle. Our network's intelligence emerges not from pretraining, vast datasets, exhaustive search, or massive compute—but from compression. We challenge the conventional reliance on extensive pretraining and data, and propose a future where tailored compressive objectives and efficient inference-time computation work together to extract deep intelligence from minimal input.
-
-
-<br>
----
-
-# Table of Contents
-
-[Top of Page](#topofpage)
-1. [What is ARC-AGI?](#what-is-arc-agi)
-2. [Our Solution Method](#our-solution-method)
-    - [Watching the Network Learn: Color the Boxes](#watching-the-network-learn-color-the-boxes)
-3. [How to Derive Our Solution Method](#how-to-derive-our-solution-method)
-    - [A Primer on Lossless Information Compression](#a-primer-on-lossless-information-compression)
-    - [One-Size-Fits-All Compression](#one-size-fits-all-compression)
-    - [Neural Networks to the Rescue](#neural-networks-to-the-rescue)
-4. [Architecture](#architecture)
-    - [Multitensors](#multitensors)
-5. [Results](#results)
-    - [What Puzzles Can and Can't We Solve?](#what-puzzles-can-and-cant-we-solve)
-6. [Case Study: Color the Boxes](#case-study-color-the-boxes)
-    - [Solution Analysis: Color the Boxes](#solution-analysis-color-the-boxes)
-7. [How to Improve Our Work](#how-to-improve-our-work)
-    - [Joint Compression via Weight Sharing Between Puzzles](#joint-compression-via-weight-sharing-between-puzzles)
-    - [Convolution-like Layers for Shape Copying Tasks](#convolution-like-layers-for-shape-copying-tasks)
-    - [KL Floor for Posterior Collapse](#kl-floor-for-posterior-collapse)
-    - [Regularization](#regularization)
-8. [Related Work](#related-work)
-    - [Equivalence of Compression and Intelligence](#equivalence-of-compression-and-intelligence)
-    - [Information Theory and Coding Theory](#information-theory-and-coding-theory)
-    - [Variational Autoencoders](#variational-autoencoders)
-    - [ARC-AGI Methods](#arc-agi-methods)
-    - [Deep Learning Achitectures](#deep-learning-architectures)
-9. [Appendix](#appendix)
-    - [Layers in the Architecture](#layers-in-the-architecture)
-        - [Decoding Layer](#decoding-layer)
-        - [Multitensor Communication Layer](#multitensor-communication-layer)
-        - [Softmax Layer](#softmax-layer)
-        - [Directional Cummax/Shift Layer](#directional-cummaxshift-layer)
-        - [Directional Communication Layer](#directional-communication-layer)
-        - [Nonlinear Layer](#nonlinear-layer)
-        - [Normalization Layer](#normalization-layer)
-        - [Linear Heads](#linear-heads)
-    - [Other Architectural Details](#other-architectural-details)
-        - [Rules for legal multitensors](#rules-for-legal-multitensors)
-        - [Weight Tying for Reflection/Rotation Symmetry](#weight-tying-for-reflectionrotation-symmetry)
-        - [Training](#training)
-    - [Preprocessing](#preprocessing)
-    	- [Output Shape Determination](#output-shape-determination)
-    	- [Number of Colors](#number-of-colors)
-    - [Postprocessing](#postprocessing)
-    - [What Happens to the Representations during Learning](#what-happens-to-the-representations-during-learning)
-    - [Additional Case Studies](#additional-case-studies)
-    	- [Case Study: Bounding Box](#case-study-bounding-box)
-    	    - [Watching the Network Learn: Bounding Box](#watching-the-network-learn-bounding-box)
-    	    - [Solution Analysis: Bounding Box](#solution-analysis-bounding-box)
-    	- [Case Study: Center Cross](#case-study-center-cross)
-    	    - [Solution Analysis: Center Cross](#solution-analysis-center-cross)
-    - [List of Mentioned ARC-AGI Puzzles](#list-of-mentioned-arc-agi-puzzles)
-    - [Code](#code)
 
 
 <br>
@@ -1068,6 +1161,7 @@ If you'd like to cite this blog post, use the following entry:
 
 <br>
 ---
+</div>
 
 <script type="text/javascript" id="MathJax-script" async
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
