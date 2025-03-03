@@ -164,7 +164,14 @@ tags:
     margin-left: 270px;
     padding: 15px;
     width: calc(100%-270px);
-    max-width: 1600px;
+    max-width: 900px;
+    box-sizing: border-box;
+  }
+  .footnotes {
+    margin-left: 270px;
+    padding: 15px;
+    width: calc(100%-270px);
+    max-width: 900px;
     box-sizing: border-box;
   }
   @media (max-width: 768px) {
@@ -172,6 +179,10 @@ tags:
       display: none;
     }
     #content {
+      margin-left: 0;
+      width: 100%;
+    }
+    .footnotes {
       margin-left: 0;
       width: 100%;
     }
