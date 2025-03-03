@@ -15,17 +15,20 @@ tags:
 
 <br/><br/>
 
-This project's aim is to revitalize the niche perspective in machine learning that **lossless information compression is sufficient to produce intelligent behavior**. Although researchers have long speculated that efficient compression is at the heart of intelligence (see, e.g., [Hernández-Orallo & Minaya-Collado, 1998](https://www.researchgate.net/publication/2472570_A_Formal_Definition_of_Intelligence_Based_on_an_Intensional_Variant_of_Algorithmic_Complexity); [Mahoney, 1999](https://gwern.net/doc/cs/algorithm/information/compression/1999-mahoney.pdf); [Hutter, 2005](https://link.springer.com/book/10.1007/b138233); [Legg & Hutter, 2007](https://arxiv.org/abs/0712.3329)), this idea flew under the radar because it has struggled to directly yield scalable algorithms. We tried leveraging information compression to solve the data-limited [ARC-AGI challenge](https://arcprize.org/), and developed a method that achieves 20% on the evaluation set, with the following properties:
+In this blog post, we aim to answer a simple yet fundamental question:
+
+**Can lossless information compression by itself produce intelligent behavior?**
+
+Although researchers have long speculated that efficient compression is at the heart of intelligence (see, e.g., [Hernández-Orallo & Minaya-Collado, 1998](https://www.researchgate.net/publication/2472570_A_Formal_Definition_of_Intelligence_Based_on_an_Intensional_Variant_of_Algorithmic_Complexity); [Mahoney, 1999](https://gwern.net/doc/cs/algorithm/information/compression/1999-mahoney.pdf); [Hutter, 2005](https://link.springer.com/book/10.1007/b138233); [Legg & Hutter, 2007](https://arxiv.org/abs/0712.3329)), this idea flew under the radar because it struggled to yield scalable algorithms.
+
+In this work, we give evidence that lossless compression during inference time is sufficient, by developing a method **purely based on compression** that performs well on the [ARC-AGI challenge](https://arcprize.org/), a dataset of IQ-test-like puzzles about inferring a procedure/rule from limited demonstrations. Crucially, our solution obeys the following three restrictions:
 
 - **No pretraining**; models are randomly initialized and trained during inference time.
 - **No dataset**; one model trains on just the target ARC-AGI puzzle and outputs one answer.
 - **No search**, in most senses of the word—just gradient descent.
-- 34.75% on training set (19.45 min per puzzle, 1x RTX 4070).
-- 20% on evaluation set (20.64 min per puzzle, 1x RTX 4070).
 
-To our knowledge, **this is the first neural method for solving ARC-AGI where the training data is limited to just the target puzzle.**
+Despite these constraints, our method achieves 34.75% on the training set and 20% on the evaluation set—processing each puzzle in roughly 20 minutes on an RTX 4070. To our knowledge, this is the first neural method for solving ARC-AGI where the training data is limited to just the target puzzle. Our network's intelligence emerges not from pretraining, vast datasets, exhaustive search, or massive compute—but from compression. We challenge the conventional reliance on extensive pretraining and data, and propose a future where tailor compressive objectives and efficient inference-time computation work together to extract deep intelligence from minimal input.
 
-While [o3](https://arcprize.org/blog/oai-o3-pub-breakthrough) achieves 87.5% on the semi-private evaluation set using an entire internet's worth of training data, our focus is on the data-limited regime—precisely where compression excels. ARC-AGI is extremely data-limited, often forcing researchers to build sophisticated collections of data augmentations and synthetic puzzles. Even without external pretraining, extensive data gathering, or large-scale search, lossless information compression (via neural networks) applied directly to each ARC puzzle is sufficient to grok the answer from just the information in the target puzzle.
 
 <br/><br/>
 ---
@@ -33,32 +36,31 @@ While [o3](https://arcprize.org/blog/oai-o3-pub-breakthrough) achieves 87.5% on 
 # Table of Contents
 
 [Top of Page](#topofpage)
-1. [Table of Contents](#table-of-contents)
-2. [What is ARC-AGI?](#what-is-arc-agi)
-3. [Our Solution Method](#our-solution-method)
+1. [What is ARC-AGI?](#what-is-arc-agi)
+2. [Our Solution Method](#our-solution-method)
     - [Watching the Network Learn: Color the Boxes](#watching-the-network-learn-color-the-boxes)
-4. [How to Derive Our Solution Method](#how-to-derive-our-solution-method)
+3. [How to Derive Our Solution Method](#how-to-derive-our-solution-method)
     - [A Primer on Lossless Information Compression](#a-primer-on-lossless-information-compression)
     - [One-Size-Fits-All Compression](#one-size-fits-all-compression)
     - [Neural Networks to the Rescue](#neural-networks-to-the-rescue)
-5. [Architecture](#architecture)
+4. [Architecture](#architecture)
     - [Multitensors](#multitensors)
-6. [Results](#results)
+5. [Results](#results)
     - [What Puzzles Can and Can't We Solve?](#what-puzzles-can-and-cant-we-solve)
-7. [Case Study: Color the Boxes](#case-study-color-the-boxes)
+6. [Case Study: Color the Boxes](#case-study-color-the-boxes)
     - [Solution Analysis: Color the Boxes](#solution-analysis-color-the-boxes)
-8. [How to Improve Our Work](#how-to-improve-our-work)
+7. [How to Improve Our Work](#how-to-improve-our-work)
     - [Joint Compression via Weight Sharing Between Puzzles](#joint-compression-via-weight-sharing-between-puzzles)
     - [Convolution-like Layers for Shape Copying Tasks](#convolution-like-layers-for-shape-copying-tasks)
     - [KL Floor for Posterior Collapse](#kl-floor-for-posterior-collapse)
     - [Regularization](#regularization)
-9. [Related Work](#related-work)
+8. [Related Work](#related-work)
     - [Equivalence of Compression and Intelligence](#equivalence-of-compression-and-intelligence)
     - [Information Theory and Coding Theory](#information-theory-and-coding-theory)
     - [Variational Autoencoders](#variational-autoencoders)
     - [ARC-AGI Methods](#arc-agi-methods)
     - [Deep Learning Achitectures](#deep-learning-architectures)
-10. [Appendix](#appendix)
+9. [Appendix](#appendix)
     - [Layers in the Architecture](#layers-in-the-architecture)
         - [Decoding Layer](#decoding-layer)
         - [Multitensor Communication Layer](#multitensor-communication-layer)
@@ -92,7 +94,7 @@ While [o3](https://arcprize.org/blog/oai-o3-pub-breakthrough) achieves 87.5% on 
 
 # What is ARC-AGI?
 
-[ARC-AGI](https://arcprize.org/) is an artifical intelligence benchmark [introduced in 2019](https://arxiv.org/abs/1911.01547) that motivates researchers to work on problems and methods that are key to the future development of [artificial general intelligence](https://arxiv.org/abs/1911.01547) (AGI). Many see it as a test that indicates AGI if solved, though this is not its original intention. It is a dataset consisting IQ-test-like puzzles. Below are three of the 1000 puzzles:
+[ARC-AGI](https://arcprize.org/), [introduced in 2019](https://arxiv.org/abs/1911.01547), is an artificial intelligence benchmark designed to test a system’s ability to infer and generalize abstract rules from minimal examples. The dataset consists of IQ-test-like puzzles, where each puzzle provides several example images that demonstrate an underlying rule, along with a test image that requires completing or applying that rule. While some have suggested that solving ARC-AGI might signal the advent of [artificial general intelligence](https://arxiv.org/abs/1911.01547) (AGI), its true purpose is to spotlight the current challenges hindering progress toward AGI. Below are three of the 1000 puzzles:
 
 | Hidden rule: Shift every object to the right by one pixel, except the bottom/right edges of the object. | Hidden rule: Shrink the big object and set its color to the scattered dots' color. | Hidden rule: Extend the green line to meet the red line by turning when hitting a wall. |
 | -------- | ------------------------- | -------- |
@@ -100,27 +102,29 @@ While [o3](https://arcprize.org/blog/oai-o3-pub-breakthrough) achieves 87.5% on 
 
 For every puzzle, there is a hidden rule that maps each input grid to each output grid. You are given some number of examples of input-to-output mappings, and you get **two attempts** to guess the output grid for a given input grid, without being told the hidden rule. If either guess is correct, then you score 1 for that puzzle, else you score 0. You are allowed to change the size of the output grid and pick the color of every pixel. The puzzles are designed so that **humans can reasonably find the answer, but machines should have more difficulty**. [The average human can solve 76.2% of the training set](https://arcprize.org/guide), and [a human expert can solve 98.5%.](https://arxiv.org/abs/2409.01374)
 
-There are 400 public training puzzles, 400 public evaluation puzzles, 100 semi-private evaluation puzzles, and 100 test puzzles not released to the public. The training puzzles are easier than the rest of the puzzles, and are meant to help you absorb the following assumed knowledge which is useful for solving the other splits:
+The 400 training puzzles are easier than the rest, and are meant to help you learn the following patterns:
 - **Objectness:** Objects persist and cannot appear or disappear without reason. Objects can interact or not depending on the circumstances.
 - **Goal-directedness:** Objects can be animate or inanimate. Some objects are "agents" - they have intentions and they pursue goals.
 - **Numbers & counting:** Objects can be counted or sorted by their shape, appearance, or movement using basic mathematics like addition, subtraction, and comparison.
 - **Basic geometry & topology:** Objects can be shapes like rectangles, triangles, and circles which can be mirrored, rotated, translated, deformed, combined, repeated, etc. Differences in distances can be detected.
 
-The ARC Prize team has repeatedly launched competitions for solving ARC-AGI, with monetary rewards. [The most recent competition](https://www.kaggle.com/competitions/arc-prize-2024) involved potential prizes and awards of upwards of **$1,000,000**, with the main prize reserved for methods which could achieve 85% on the private test set, using 12 hours of compute in a constrained environment.
+The ARC Prize team has repeatedly launched competitions for solving ARC-AGI, with monetary rewards. [The most recent competition](https://www.kaggle.com/competitions/arc-prize-2024) involved potential prizes and awards of upwards of **$1,000,000**, with the main prize reserved for methods which could achieve 85% on a private test set of 100 puzzles, using 12 hours of compute in a constrained environment.
 
 <br/><br/>
 ---
 
 # Our Solution Method
 
-<img align="right" src="./resources/algorithm_environment.JPG" width="50%" style="margin: 20px 0 20px 10px;">
+<!--<img align="right" src="./resources/algorithm_environment.JPG" width="50%" style="margin: 20px 0 20px 10px;">-->
 
-**We believe lossless information compression schemes can be used as programs for solving ARC-AGI. The more bit-efficient the compression scheme, the "smarter" the answer and the more correct it is, and with enough bit efficiency we can eventually get the right answer.** To solve a set of ARC-AGI puzzles, we find the smallest possible bit string that when decompressed, exactly produces the set of target puzzles, but with any answers filled in. Those are our answer guesses. The main challenge is to find a bit-efficient encoder-decoder system where the encoder doesn't need any answers as input to make the bit string. Our method for solving ARC-AGI uses a **training algorithm** and a **neural network forward pass** as the **encoder** and **decoder**, respectively, and the compressed bit representation contains learned parameters such as the weights and inputs for the network.
+**We propose that lossless information compression can serve as an effective framework for solving ARC-AGI puzzles. A more efficient (i.e., lower-bit) compression of a puzzle correlates with a more accurate solution.** To solve ARC-AGI puzzles, we design a system that transforms an incomplete puzzle into a completed one—filling in the answers—by finding a compact representation that, when decompressed, reproduces the puzzle with any solution. The key challenge is to obtain this compact representation without needing the answers as inputs.
+
+Our method uses a neural network as the decoder. However, the encoder is not another network—instead, it is realized by the gradient descent algorithm that performs inference-time training on the decoder while maintaining correct decoded output. In other words, running the encoder means optimizing the decoder’s parameters and input distribution to achieve the most compressed puzzle representation. The resulting optimized parameters (e.g., weights and input distribution settings) themselves serve as the compressed bit representation that encodes the puzzle along with its answer.
 
 In standard machine learning lingo: (without compression terminology, and with some simplifications)
 
-1. We start at inference time, and we are given an ARC-AGI puzzle to solve. (Eg. Puzzle in the diagram below.)
-2. We construct a neural network $f$ (see [architecture](#architecture)) designed for the puzzle's specifics (eg. number of examples, observed colors). The network takes random normal input $z \sim N(\mu, \Sigma)$, and per-pixel color logit predictions across all the grids, including an answer grid (3 input-output examples, for a total of 6 grids). Importantly, $f_\theta$ is equivariant to common augmentations—such as reordering input-output pairs (including the answer's pair), color permutations, and spatial rotations/reflections.
+1. We start at inference time, and we are given an ARC-AGI puzzle to solve. (e.g., puzzle in the diagram below.)
+2. We construct a neural network $f$ (see [architecture](#architecture)) designed for the puzzle's specifics (e.g., number of examples, observed colors). The network takes random normal input $z \sim N(\mu, \Sigma)$, and per-pixel color logit predictions across all the grids, including an answer grid (3 input-output examples, for a total of 6 grids). Importantly, $f_\theta$ is equivariant to common augmentations—such as reordering input-output pairs (including the answer's pair), color permutations, and spatial rotations/reflections.
 3. We initialize the network weights $\theta$ and set the parameters $\mu$ and $\Sigma$ for the $z$ distribution.
 4. We jointly optimize $\theta$, $\mu$, and $\Sigma$ to minimize the sum of cross-entropies over the known grids (5 of them,) ignoring the answer grid. A KL divergence penalty keeps $N(\mu, \Sigma)$ close to $N(0,1)$, as in a VAE.
 5. Since the generated answer grid is stochastic due to the randomness in $z$, we save the answer grids throughout training and choose the most frequently occuring one as our final prediction.
@@ -313,103 +317,103 @@ A final note on the $channel$ dimension: usually when talking about a tensor's s
     </tr>
     <tr>
       <td>100</td>
-      <td>6.48 h</td>
-      <td>1%</td>
-      <td>2.25%</td>
-      <td>3.5%</td>
-      <td>4.75%</td>
-      <td>6.75%</td>
-      <td>6.75%</td>
+      <td>6 h</td>
+      <td align="right">1%</td>
+      <td align="right">2.25%</td>
+      <td align="right">3.5%</td>
+      <td align="right">4.75%</td>
+      <td align="right">6.75%</td>
+      <td align="right">6.75%</td>
     </tr>
     <tr>
       <td>200</td>
-      <td>12.97 h</td>
-      <td>11.5%</td>
-      <td>14.25%</td>
-      <td>16.5%</td>
-      <td>18.25%</td>
-      <td>23.25%</td>
-      <td>23.5%</td>
+      <td>13 h</td>
+      <td align="right">11.5%</td>
+      <td align="right">14.25%</td>
+      <td align="right">16.5%</td>
+      <td align="right">18.25%</td>
+      <td align="right">23.25%</td>
+      <td align="right">23.5%</td>
     </tr>
     <tr>
       <td>300</td>
-      <td>19.45 h</td>
-      <td>18.5%</td>
-      <td>21.25%</td>
-      <td>23.5%</td>
-      <td>26.75%</td>
-      <td>31.5%</td>
-      <td>32.5%</td>
+      <td>19 h</td>
+      <td align="right">18.5%</td>
+      <td align="right">21.25%</td>
+      <td align="right">23.5%</td>
+      <td align="right">26.75%</td>
+      <td align="right">31.5%</td>
+      <td align="right">32.5%</td>
     </tr>
     <tr>
       <td>400</td>
-      <td>25.93 h</td>
-      <td>21%</td>
-      <td>25%</td>
-      <td>28.75%</td>
-      <td>31%</td>
-      <td>36%</td>
-      <td>37.5%</td>
+      <td>26 h</td>
+      <td align="right">21%</td>
+      <td align="right">25%</td>
+      <td align="right">28.75%</td>
+      <td align="right">31%</td>
+      <td align="right">36%</td>
+      <td align="right">37.5%</td>
     </tr>
     <tr>
       <td>500</td>
-      <td>32.42 h</td>
-      <td>23%</td>
-      <td>27.5%</td>
-      <td>31.5%</td>
-      <td>33.5%</td>
-      <td>39.25%</td>
-      <td>40.75%</td>
+      <td>32 h</td>
+      <td align="right">23%</td>
+      <td align="right">27.5%</td>
+      <td align="right">31.5%</td>
+      <td align="right">33.5%</td>
+      <td align="right">39.25%</td>
+      <td align="right">40.75%</td>
     </tr>
     <tr>
       <td>750</td>
-      <td>48.62 h</td>
-      <td>28%</td>
-      <td>30.5%</td>
-      <td>34%</td>
-      <td>36.25%</td>
-      <td>42.75%</td>
-      <td>44.5%</td>
+      <td>49 h</td>
+      <td align="right">28%</td>
+      <td align="right">30.5%</td>
+      <td align="right">34%</td>
+      <td align="right">36.25%</td>
+      <td align="right">42.75%</td>
+      <td align="right">44.5%</td>
     </tr>
     <tr>
       <td>1000</td>
-      <td>64.83 h</td>
-      <td>28%</td>
-      <td>31.75%</td>
-      <td>35.5%</td>
-      <td>37.75%</td>
-      <td>43.75%</td>
-      <td>46.5%</td>
+      <td>65 h</td>
+      <td align="right">28%</td>
+      <td align="right">31.75%</td>
+      <td align="right">35.5%</td>
+      <td align="right">37.75%</td>
+      <td align="right">43.75%</td>
+      <td align="right">46.5%</td>
     </tr>
     <tr>
       <td>1250</td>
-      <td>81.04 h</td>
-      <td>29%</td>
-      <td>32.25%</td>
-      <td>37%</td>
-      <td>39.25%</td>
-      <td>45.5%</td>
-      <td>49.25%</td>
+      <td>81 h</td>
+      <td align="right">29%</td>
+      <td align="right">32.25%</td>
+      <td align="right">37%</td>
+      <td align="right">39.25%</td>
+      <td align="right">45.5%</td>
+      <td align="right">49.25%</td>
     </tr>
     <tr>
       <td>1500</td>
-      <td>97.25 h</td>
-      <td>29.5%</td>
-      <td>33%</td>
-      <td>38.25%</td>
-      <td>40.75%</td>
-      <td>46.75%</td>
-      <td>51.75%</td>
+      <td>97 h</td>
+      <td align="right">29.5%</td>
+      <td align="right">33%</td>
+      <td align="right">38.25%</td>
+      <td align="right">40.75%</td>
+      <td align="right">46.75%</td>
+      <td align="right">51.75%</td>
     </tr>
     <tr>
       <td>2000</td>
-      <td>129.66 h</td>
-      <td>30.25%</td>
-      <td>34.75%</td>
-      <td>38.25%</td>
-      <td>41.5%</td>
-      <td>48.5%</td>
-      <td>52.75%</td>
+      <td>130 h</td>
+      <td align="right">30.25%</td>
+      <td align="right">34.75%</td>
+      <td align="right">38.25%</td>
+      <td align="right">41.5%</td>
+      <td align="right">48.5%</td>
+      <td align="right">52.75%</td>
     </tr>
   </table>
 </div>
@@ -435,103 +439,103 @@ A final note on the $channel$ dimension: usually when talking about a tensor's s
     </tr>
     <tr>
       <td>100</td>
-      <td>6.88 h</td>
-      <td>0.75%</td>
-      <td>1.25%</td>
-      <td>2.25%</td>
-      <td>2.5%</td>
-      <td>3%</td>
-      <td>3%</td>
+      <td>7 h</td>
+      <td align="right">0.75%</td>
+      <td align="right">1.25%</td>
+      <td align="right">2.25%</td>
+      <td align="right">2.5%</td>
+      <td align="right">3%</td>
+      <td align="right">3%</td>
     </tr>
     <tr>
       <td>200</td>
-      <td>13.76 h</td>
-      <td>5%</td>
-      <td>6%</td>
-      <td>7%</td>
-      <td>7.75%</td>
-      <td>12%</td>
-      <td>12.25%</td>
+      <td>14 h</td>
+      <td align="right">5%</td>
+      <td align="right">6%</td>
+      <td align="right">7%</td>
+      <td align="right">7.75%</td>
+      <td align="right">12%</td>
+      <td align="right">12.25%</td>
     </tr>
     <tr>
       <td>300</td>
-      <td>20.64 h</td>
-      <td>10%</td>
-      <td>10.75%</td>
-      <td>12.25%</td>
-      <td>13.25%</td>
-      <td>15.5%</td>
-      <td>16.25%</td>
+      <td>21 h</td>
+      <td align="right">10%</td>
+      <td align="right">10.75%</td>
+      <td align="right">12.25%</td>
+      <td align="right">13.25%</td>
+      <td align="right">15.5%</td>
+      <td align="right">16.25%</td>
     </tr>
     <tr>
       <td>400</td>
-      <td>27.53 h</td>
-      <td>11.75%</td>
-      <td>13.75%</td>
-      <td>16%</td>
-      <td>17%</td>
-      <td>19.75%</td>
-      <td>20%</td>
+      <td>28 h</td>
+      <td align="right">11.75%</td>
+      <td align="right">13.75%</td>
+      <td align="right">16%</td>
+      <td align="right">17%</td>
+      <td align="right">19.75%</td>
+      <td align="right">20%</td>
     </tr>
     <tr>
       <td>500</td>
-      <td>34.41 h</td>
-      <td>13.5%</td>
-      <td>15%</td>
-      <td>17.75%</td>
-      <td>19.25%</td>
-      <td>20.5%</td>
-      <td>21.5%</td>
+      <td>34 h</td>
+      <td align="right">13.5%</td>
+      <td align="right">15%</td>
+      <td align="right">17.75%</td>
+      <td align="right">19.25%</td>
+      <td align="right">20.5%</td>
+      <td align="right">21.5%</td>
     </tr>
     <tr>
       <td>750</td>
-      <td>51.61 h</td>
-      <td>15.5%</td>
-      <td>17.75%</td>
-      <td>19.75%</td>
-      <td>21.5%</td>
-      <td>22.75%</td>
-      <td>25.5%</td>
+      <td>52 h</td>
+      <td align="right">15.5%</td>
+      <td align="right">17.75%</td>
+      <td align="right">19.75%</td>
+      <td align="right">21.5%</td>
+      <td align="right">22.75%</td>
+      <td align="right">25.5%</td>
     </tr>
     <tr>
       <td>1000</td>
-      <td>68.82 h</td>
-      <td>16.75%</td>
-      <td>19.25%</td>
-      <td>21.75%</td>
-      <td>23%</td>
-      <td>26%</td>
-      <td>28.75%</td>
+      <td>69 h</td>
+      <td align="right">16.75%</td>
+      <td align="right">19.25%</td>
+      <td align="right">21.75%</td>
+      <td align="right">23%</td>
+      <td align="right">26%</td>
+      <td align="right">28.75%</td>
     </tr>
     <tr>
       <td>1250</td>
-      <td>86.02 h</td>
-      <td>17%</td>
-      <td>20.75%</td>
-      <td>23%</td>
-      <td>24.5%</td>
-      <td>28.25%</td>
-      <td>30.75%</td>
+      <td>86 h</td>
+      <td align="right">17%</td>
+      <td align="right">20.75%</td>
+      <td align="right">23%</td>
+      <td align="right">24.5%</td>
+      <td align="right">28.25%</td>
+      <td align="right">30.75%</td>
     </tr>
     <tr>
       <td>1500</td>
-      <td>103.22 h</td>
-      <td>18.25%</td>
-      <td>21.5%</td>
-      <td>24.25%</td>
-      <td>25.5%</td>
-      <td>29.5%</td>
-      <td>31.75%</td>
+      <td>103 h</td>
+      <td align="right">18.25%</td>
+      <td align="right">21.5%</td>
+      <td align="right">24.25%</td>
+      <td align="right">25.5%</td>
+      <td align="right">29.5%</td>
+      <td align="right">31.75%</td>
     </tr>
     <tr>
       <td>2000</td>
-      <td>137.63 h</td>
-      <td>18.5%</td>
-      <td>20%</td>
-      <td>24.25%</td>
-      <td>26%</td>
-      <td>31.25%</td>
-      <td>33.75%</td>
+      <td>138 h</td>
+      <td align="right">18.5%</td>
+      <td align="right">20%</td>
+      <td align="right">24.25%</td>
+      <td align="right">26%</td>
+      <td align="right">31.25%</td>
+      <td align="right">33.75%</td>
     </tr>
   </table>
 </div>
@@ -650,7 +654,7 @@ At the time of release of this project, there were several ideas which we though
 Our current system tries to solve each puzzle serially by compressing each puzzle on its own. We believe that joint compression of all the entire ARC-AGI dataset at once should yield better learned inductive biases per-puzzle, since computations learned for one puzzle can be transferred to other puzzles. We do not account for the complexity of $f$ in our [method](#how-to-derive-our-solution-method), allowing for $f$ to be used for memorization/overfitting. By jointly compressing the whole dataset, we only need to have one $f$, whereas when compressing each puzzle individually, we need to have an $f$ for every puzzle, allowing for more memorization/overfitting.
 
 To implement this, we would most likely explore strategies like:
-- Using the same network weights for all puzzles, and training for puzzles in parallel. Each puzzle gets assigned some perturbation to the weights, that is constrained in some way, eg. [LORA](https://arxiv.org/abs/2106.09685).
+- Using the same network weights for all puzzles, and training for puzzles in parallel. Each puzzle gets assigned some perturbation to the weights, that is constrained in some way, e.g., [LORA](https://arxiv.org/abs/2106.09685).
 - Learning a "puzzle embedding" for every puzzle that is a high dimensional vector (more than 16 dim, less than 256 dim), and learning a linear mapping from puzzle embeddings to weights for our network. This mapping serves as a basic [hypernetwork](https://arxiv.org/abs/2306.06955), ie. a neural network that outputs weights for another neural network.
 In a successful case, we might want to also try adding in some form of positional encodings, with the hope that $f$ is now small/simple enough to be incapable of memorization/overfitting using positional encodings.
 
