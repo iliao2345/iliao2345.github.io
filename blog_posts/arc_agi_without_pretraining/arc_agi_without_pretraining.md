@@ -164,14 +164,14 @@ tags:
     margin-left: 270px;
     padding: 15px;
     width: calc(100%-270px);
-    max-width: 900px;
+    max-width: 1600px;
     box-sizing: border-box;
   }
   .footnotes {
     margin-left: 270px;
     padding: 15px;
     width: calc(100%-270px);
-    max-width: 900px;
+    max-width: 1600px;
     box-sizing: border-box;
   }
   @media (max-width: 768px) {
