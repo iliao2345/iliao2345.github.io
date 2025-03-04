@@ -199,13 +199,13 @@ In this blog post, we aim to answer a simple yet fundamental question:
 
 The idea that efficient compression by itself lies at the heart of intelligence is not new (see, e.g., [Hernández-Orallo & Minaya-Collado, 1998](https://www.researchgate.net/publication/2472570_A_Formal_Definition_of_Intelligence_Based_on_an_Intensional_Variant_of_Algorithmic_Complexity); [Mahoney, 1999](https://gwern.net/doc/cs/algorithm/information/compression/1999-mahoney.pdf); [Hutter, 2005](https://link.springer.com/book/10.1007/b138233); [Legg & Hutter, 2007](https://arxiv.org/abs/0712.3329)). Rather than revisiting those theoretical discussions, we make a practical demonstration instead.
 
-In this work, we give evidence that lossless compression during inference time is sufficient to produce intelligent behavior, by developing a method **purely based on compression** that performs well on the [ARC-AGI challenge](https://arcprize.org/), a dataset of IQ-test-like puzzles about inferring a procedure/rule from limited demonstrations. Crucially, our solution obeys the following three restrictions:
+In this work, we give evidence that lossless compression during inference time is sufficient to produce intelligent behavior, by developing a method **purely based on compression** that performs well on the [ARC-AGI challenge](https://arcprize.org/), a dataset of IQ-test-like puzzles about inferring a procedure/rule from limited demonstrations. Crucially, our solution, which we name CompressARC, obeys the following three restrictions:
 
 - **No pretraining**; models are randomly initialized and trained during inference time.
 - **No dataset**; one model trains on just the target ARC-AGI puzzle and outputs one answer.
 - **No search**, in most senses of the word—just gradient descent.
 
-Despite these constraints, our method achieves 34.75% on the training set and 20% on the evaluation set—processing each puzzle in roughly 20 minutes on an RTX 4070. To our knowledge, this is the first neural method for solving ARC-AGI where the training data is limited to just the target puzzle. Our network's intelligence emerges not from pretraining, vast datasets, exhaustive search, or massive compute—but from compression. We challenge the conventional reliance on extensive pretraining and data, and propose a future where tailored compressive objectives and efficient inference-time computation work together to extract deep intelligence from minimal input.
+Despite these constraints, CompressARC achieves 34.75% on the training set and 20% on the evaluation set—processing each puzzle in roughly 20 minutes on an RTX 4070. To our knowledge, this is the first neural method for solving ARC-AGI where the training data is limited to just the target puzzle. CompressARC's intelligence emerges not from pretraining, vast datasets, exhaustive search, or massive compute—but from compression. We challenge the conventional reliance on extensive pretraining and data, and propose a future where tailored compressive objectives and efficient inference-time computation work together to extract deep intelligence from minimal input.
 
 
 <br>
@@ -238,7 +238,7 @@ The ARC Prize team has repeatedly launched competitions for solving ARC-AGI, wit
 
 **We propose that lossless information compression can serve as an effective framework for solving ARC-AGI puzzles. A more efficient (i.e., lower-bit) compression of a puzzle correlates with a more accurate solution.** To solve ARC-AGI puzzles, we design a system that transforms an incomplete puzzle into a completed one—filling in the answers—by finding a compact representation that, when decompressed, reproduces the puzzle with any solution. The key challenge is to obtain this compact representation without needing the answers as inputs.
 
-Our method uses a neural network as the decoder. However, the encoder is not another network—instead, it is realized by the gradient descent algorithm that performs inference-time training on the decoder while maintaining correct decoded output. In other words, running the encoder means optimizing the decoder’s parameters and input distribution to achieve the most compressed puzzle representation. The resulting optimized parameters (e.g., weights and input distribution settings) themselves serve as the compressed bit representation that encodes the puzzle along with its answer.
+CompressARC uses a neural network as the decoder. However, the encoding algorithm is not another network—instead, encoding is realized by the gradient descent algorithm that performs inference-time training on the decoder while maintaining correct decoded output. In other words, running the encoder means optimizing the decoder’s parameters and input distribution to achieve the most compressed puzzle representation. The resulting optimized parameters (e.g., weights and input distribution settings) themselves serve as the compressed bit representation that encodes the puzzle along with its answer.
 
 In standard machine learning lingo: (without compression terminology, and with some simplifications)
 
@@ -260,13 +260,13 @@ It isn't obvious why such a method is performing compression. You'll see later [
 #### Human Solution:
 We first realize that the input is divided into boxes, and the boxes are still there in the output, but now they're colored. We then try to figure out which colors go in which boxes. First, we notice that the corners are always black. Then, we notice that the middle is always magenta. And after that, we notice that the color of the side boxes depends on which direction they are in: red for up, blue for down, green for right, and yellow for left. At this point, we copy the input over to the answer grid, then we color the middle box magenta, and then color the rest of the boxes according to their direction.
 
-#### Network Solution:
+#### CompressARC Solution:
 <table width="100%" style="border: none;">
   <tr>
   <td width="50%">
   <strong> 50 steps of learning:</strong>
   <br><br/>
-  The network, given random input $z$, outputted an answer grid (sample) with light blue rows/columns wherever the input has the same. The network noticed that all the other input-output pairs in the puzzle exhibit this correspondence. The network doesn't know how the other output pixels are assigned colors; an exponential moving average of the network output (sample average) shows the network assigning mostly the same average color to non-light-blue pixels.
+  CompressARC's network outputs an answer grid (sample) with light blue rows/columns wherever the input has the same. It has noticed that all the other input-output pairs in the puzzle exhibit this correspondence. It doesn't know how the other output pixels are assigned colors; an exponential moving average of the network output (sample average) shows the network assigning mostly the same average color to non-light-blue pixels.
   </td>
   <td width="50%"><img align="right" src="./resources/272f95fa_at_50_steps.png"></td>
   </tr>
@@ -274,7 +274,7 @@ We first realize that the input is divided into boxes, and the boxes are still t
   <td width="50%">
   <strong> 150 steps of learning:</strong>
   <br><br/>
-  The network outputs a grid where nearby pixels have similar colors. The network has likely noticed that this is common among all the outputs, and is guessing that it applies to the answer too.
+  The network outputs a grid where nearby pixels have similar colors. It has likely noticed that this is common among all the outputs, and is guessing that it applies to the answer too.
   </td>
   <td width="50%"><img align="right" src="./resources/272f95fa_at_150_steps.png"></td>
   </tr>
@@ -282,7 +282,7 @@ We first realize that the input is divided into boxes, and the boxes are still t
   <td width="50%">
   <strong> 200 steps of learning:</strong>
   <br><br/>
-  The network output now shows larger blobs of colors that are cut off by the light blue borders. The network has noticed the common usage of borders to demarcate blobs of colors in other outputs, and applies the same idea here. The network has also noticed black corner blobs in other given outputs, which the network imitates.
+  The network output now shows larger blobs of colors that are cut off by the light blue borders. It has noticed the common usage of borders to demarcate blobs of colors in other outputs, and applies the same idea here. It has also noticed black corner blobs in other given outputs, which the network imitates.
   </td>
   <td width="50%"><img align="right" src="./resources/272f95fa_at_200_steps.png"></td>
   </tr>
@@ -290,7 +290,7 @@ We first realize that the input is divided into boxes, and the boxes are still t
   <td width="50%">
   <strong> 350 steps of learning:</strong>
   <br><br/>
-  The network output now shows the correct colors assigned to boxes of the correct direction from the center. The network has realized that a single color-to-direction mapping is used to pick the blob colors in the other given outputs, so it imitates this mapping. It is still not the best at coloring within the lines, and it's also confused about the center blob, probably because the middle does not correspond to a direction. Nevertheless, the averate network output does show a tinge of the correct magenta color in the middle, meaning the network is catching on.
+  The network output now shows the correct colors assigned to boxes of the correct direction from the center. It has realized that a single color-to-direction mapping is used to pick the blob colors in the other given outputs, so it imitates this mapping. It is still not the best at coloring within the lines, and it's also confused about the center blob, probably because the middle does not correspond to a direction. Nevertheless, the averate network output does show a tinge of the correct magenta color in the middle, meaning the network is catching on.
   </td>
   <td width="50%"><img align="right" src="./resources/272f95fa_at_350_steps.png"></td>
   </tr>
@@ -350,10 +350,10 @@ This restricted compression scheme uses [Relative Entropy Coding](https://arxiv.
 
    We can compute gradients of these code lengths via the [reparameterization trick](https://arxiv.org/abs/1312.6114).
 
-At this point, we observe that the total code length for $s$ that we described is actually the VAE loss with decoder regularization (= KL for $z$ + reconstruction error + regularization). Likewise, if we port the rest of what we described above (plus modifications regarding equivariances and inter-puzzle independence, and ignoring regularization) into typical machine learning lingo, we get the [above description of our method](#our-solution-method).
+At this point, we observe that the total code length for $s$ that we described is actually the VAE loss with decoder regularization (= KL for $z$ + reconstruction error + regularization). Likewise, if we port the rest of what we described above (plus modifications regarding equivariances and inter-puzzle independence, and ignoring regularization) into typical machine learning lingo, we get the [above description of CompressARC](#our-solution-method).
 
 
-[^3]: A lot of caveats/issues are introduced by using REC. The code length when using REC only behaves in some limits and expectations, there may be a small added constant to the code length, the decoding may be approximate, etc. We're not up to date with the current literature, and we're ignoring all the sticky problems that may arise and presuming that they are all solved. We will never end up running Relative Entropy Coding anyways, so it doesn't matter that it takes runtime exponential in the code length. We only need to make use of the the fact that such algorithms exist, not that they run fast, nor that we can implement them, in order to derive our method.
+[^3]: A lot of caveats/issues are introduced by using REC. The code length when using REC only behaves in some limits and expectations, there may be a small added constant to the code length, the decoding may be approximate, etc. We're not up to date with the current literature, and we're ignoring all the sticky problems that may arise and presuming that they are all solved. We will never end up running Relative Entropy Coding anyways, so it doesn't matter that it takes runtime exponential in the code length. We only need to make use of the the fact that such algorithms exist, not that they run fast, nor that we can implement them, in order to derive CompressARC.
 
 <br>
 ---
@@ -372,7 +372,7 @@ There are too many equivariances for us to think about at once, so we decided to
 
 To illustrate what we mean, suppose that both $z$ and an ARC-AGI puzzle take the form of a tensor of shape $[n\\_examples, n\\_colors, height, width, 2 \text{ for input/output}]$ (This is not actually the format of the data (see [multitensors](#multitensors)) but it gets the idea across best.) Then, our network starts out as equivariant to permutations of indices in the $example$, $color$, $height$, and $width$ dimensions. Some extra care must be taken with weight sharing, to force the network to also be equivariant to swapping the $width$ and $height$ dimensions. We may then add a layer involving a roll by one in the $width$ and $height$ dimensions, to let the network distinguish short range spatial interactions but not long-range ones.
 
-<!-- When $z$ is fully symmetrical, then the outputted puzzle must also be fully symmetrical. But notice that [our method](#our-solution-method) is allowed to learn asymmetrical $z$ in order to obtain asymmetrical outputs. Since the $z$ distribution is penalized for deviating from the fully symmetric $N(0,I)$, asymmetrical outputs are discouraged. So, the network must pay a penalty to use $z$ to distinguish the learned roles of two colors, two rows, two pixels, etc. in a puzzle. This makes $z$ naturally lean towards simpler representations of the puzzle. -->
+<!-- When $z$ is fully symmetrical, then the outputted puzzle must also be fully symmetrical. But notice that [CompressARC](#our-solution-method) is allowed to learn asymmetrical $z$ in order to obtain asymmetrical outputs. Since the $z$ distribution is penalized for deviating from the fully symmetric $N(0,I)$, asymmetrical outputs are discouraged. So, the network must pay a penalty to use $z$ to distinguish the learned roles of two colors, two rows, two pixels, etc. in a puzzle. This makes $z$ naturally lean towards simpler representations of the puzzle. -->
 
 The actual data ($z$, hidden activations, and puzzles) passing through our layers comes in a format that we call a "**multitensor**", which is just a bucket of tensors of various shapes. All the equivariances can be described in terms of how they change a multitensor. **In order to understand any of the layers we list, you must first read the below section on multitensors.**
 
@@ -662,7 +662,7 @@ A final note on the $channel$ dimension: usually when talking about a tensor's s
 
 ### What Puzzles Can and Can't We Solve?
 
-**The network tries to use its abilities to figure out as much as it can, until it gets bottlenecked by one of it's inabilities.**
+**CompressARC tries to use its abilities to figure out as much as it can, until it gets bottlenecked by one of it's inabilities.**
 
 For example, puzzle 28e73c20 in the training set requires extension of a pattern from the edge towards the middle:
 
@@ -670,11 +670,11 @@ For example, puzzle 28e73c20 in the training set requires extension of a pattern
   <img src="./resources/28e73c20_problem.png">
 </p>
 
-In general, the network is able to extend patterns for short ranges but not long ranges. So, it does the best that it can, and correctly extends the pattern a short distance before guessing at what happens near the center:
+Given the layers in it's network, CompressARC is generally able to extend patterns for short ranges but not long ranges. So, it does the best that it can, and correctly extends the pattern a short distance before guessing at what happens near the center:
 
 ![image](./resources/28e73c20_solutions.png)
 
-A short list of abilities that **can** be performed by our network includes:
+A short list of abilities that **can** be performed by CompressARC includes:
 - Assigning individual colors to individual procedures (see puzzle [0ca9ddb6](#list-of-mentioned-arc-agi-puzzles))
 - Infilling (see puzzle [0dfd9992](#list-of-mentioned-arc-agi-puzzles))
 - Cropping (see puzzle [1c786137](#list-of-mentioned-arc-agi-puzzles))
@@ -685,7 +685,7 @@ A short list of abilities that **can** be performed by our network includes:
 - Identifying parts of a shape (see puzzle [025d127b](#list-of-mentioned-arc-agi-puzzles))
 - Translation by short distances (see puzzle [025d127b](#list-of-mentioned-arc-agi-puzzles))
 
-A short list of abilities that **cannot** be performed by our network includes:
+A short list of abilities that **cannot** be performed by CompressARC includes:
 - Assigning two colors to each other (see puzzle [0d3d703e](#list-of-mentioned-arc-agi-puzzles))
 - Repeating an operation in series many times (see puzzle [0a938d79](#list-of-mentioned-arc-agi-puzzles))
 - Counting/numbers (see puzzle [ce9e57f2](#list-of-mentioned-arc-agi-puzzles))
@@ -714,7 +714,7 @@ During training, the reconstruction error fell extremely quickly. It remained lo
 
 ### Solution Analysis: Color the Boxes
 
-So how does the network learn to solve the puzzle? Let's look at the representations stored in $z$ to find out.
+So how does CompressARC learn to solve the puzzle? Let's look at the representations stored in $z$ to find out.
 
 Since $z$ is a [multitensor](#multitensors), each of the tensors it contains produces an additive contribution to the total KL for $z$. By looking at the per-tensor contributions, we can determine which tensors in $z$ code for information that is used to represent the puzzle. Below is a plot showing the quantity of information stored in each tensor of $z$, ie. the KL contribution used by the [decoding layer](#decoding-layer).
 
@@ -722,7 +722,7 @@ Since $z$ is a [multitensor](#multitensors), each of the tensors it contains pro
   <img src="./resources/272f95fa_KL_components.png">
 </p>
 
-All the tensors fall to zero information content during training, except for four tensors. In some replications of this experiment, we saw one of these four necessary tensors fall to zero information content, and the network typically does not recover the correct answer after that. Here we are showing a lucky run where the $(color, direction, channel)$ tensor almost falls but gets picked up 200 steps in, which is right around when the samples from the model begin to show the correct colors in the correct boxes.
+All the tensors fall to zero information content during training, except for four tensors. In some replications of this experiment, we saw one of these four necessary tensors fall to zero information content, and CompressARC typically does not recover the correct answer after that. Here we are showing a lucky run where the $(color, direction, channel)$ tensor almost falls but gets picked up 200 steps in, which is right around when the samples from the model begin to show the correct colors in the correct boxes.
 
 We can look at the average output of the [decoding layer](#decoding-layer) corresponding to individual tensors of $z$, to see what information is stored there. Each tensor contains a vector of dimension $n\\_channels$ for various indices of the tensor. Taking the PCA of these vectors reveals some number of activated components, telling us how many pieces of information are coded by the tensor.
 
@@ -766,11 +766,11 @@ We can look at the average output of the [decoding layer](#decoding-layer) corre
 
 # How to Improve Our Work
 
-At the time of release of this project, there were several ideas which we thought of trying or attempted at some point, but didn't manage to get working for one reason or another. Some ideas we still believe in, but didn't use, are listed below.
+At the time of release of CompressARC, there were several ideas which we thought of trying or attempted at some point, but didn't manage to get working for one reason or another. Some ideas we still believe in, but didn't use, are listed below.
 
 #### Joint Compression via Weight Sharing Between Puzzles
 
-Our current system tries to solve each puzzle serially by compressing each puzzle on its own. We believe that joint compression of all the entire ARC-AGI dataset at once should yield better learned inductive biases per-puzzle, since computations learned for one puzzle can be transferred to other puzzles. We do not account for the complexity of $f$ in our [method](#how-to-derive-our-solution-method), allowing for $f$ to be used for memorization/overfitting. By jointly compressing the whole dataset, we only need to have one $f$, whereas when compressing each puzzle individually, we need to have an $f$ for every puzzle, allowing for more memorization/overfitting.
+CompressARC tries to solve each puzzle serially by compressing each puzzle on its own. We believe that joint compression of all the entire ARC-AGI dataset at once should yield better learned inductive biases per-puzzle, since computations learned for one puzzle can be transferred to other puzzles. We do not account for the complexity of $f$ in our [method](#how-to-derive-our-solution-method), allowing for $f$ to be used for memorization/overfitting. By jointly compressing the whole dataset, we only need to have one $f$, whereas when compressing each puzzle individually, we need to have an $f$ for every puzzle, allowing for more memorization/overfitting.
 
 To implement this, we would most likely explore strategies like:
 - Using the same network weights for all puzzles, and training for puzzles in parallel. Each puzzle gets assigned some perturbation to the weights, that is constrained in some way, e.g., [LORA](https://arxiv.org/abs/2106.09685).
@@ -781,7 +781,7 @@ The reason we didn't try this is because it would slow down the research iterati
 
 #### Convolution-like Layers for Shape Copying Tasks
 
-This one is more ARC-AGI-specific and may have less to do with AGI in our view. Many ARC-AGI puzzles can be seen to involve copying shapes from one place to another, and our network has no inductive biases for such an operation. An operation which is capable of copying shapes onto multiple locations is the [convolution](https://en.wikipedia.org/wiki/Convolution). With one grid storing the shape and another with pixels activated at locations to copy to, convolving the two grids will produce another grid with the shape copied to the designated locations.
+This improvement is more ARC-AGI-specific and may have less to do with AGI in our view. Many ARC-AGI puzzles can be seen to involve copying shapes from one place to another, and our network has no inductive biases for such an operation. An operation which is capable of copying shapes onto multiple locations is the [convolution](https://en.wikipedia.org/wiki/Convolution). With one grid storing the shape and another with pixels activated at locations to copy to, convolving the two grids will produce another grid with the shape copied to the designated locations.
 
 There are several issues with introducing a convolutional operation for the network to use. Ideally, we would read two grids via projection from the residual stream, convolve them, and write it back in via another projection, with norms in the right places and such. Ignoring the fact that the grid size changes during convolution (can be solved with two parallel networks using different grid sizes), the bigger problem is that convolutions tend to amplify noise in the grids much more than the sparse signals, so their inductive bias is not good for shape copying. We can try to apply a softmax to one or both of the grids to reduce the noise (and to draw an interesting connection to attention), but we didn't find any success.
 
@@ -803,7 +803,7 @@ We implemented a mechanism to keep the KL above a minimum threshold so that the 
 
 #### Regularization
 
-We don't use it, but maybe it would help. Regularization is a way to measure the complexity of $f$ in our [problem formulation](#how-to-derive-our-solution-method).
+We don't use it. Maybe it matters, but we don't know. Regularization measures the complexity of $f$ in our [problem formulation](#how-to-derive-our-solution-method), and is native to our derivation of CompressARC. It is somewhat reckless for us to exclude it in our implementation.
 
 
 <br>
@@ -829,7 +829,7 @@ The decoder side of the [variational autoencoder](https://arxiv.org/abs/1312.611
 
 VAEs have a long history of developments that are relevant to our work. At one point, we tried using multiple [decoding layers](#decoding-layer) to make a [hierarchical VAE](https://arxiv.org/abs/1602.02282) decoder instead. This does not affect Relative Entropy Coding with the AWGN channel because [channel capacity with feedback is equal to channel capacity without feedback](https://ieeexplore.ieee.org/document/1056798). But, we found empirically that the first decoding layer would absorb all of the KL contribution, making the later decoding layers useless. Thus, we only used one decoding layer at the beginning.
 
-The [beta-VAE](https://openreview.net/forum?id=Sy2fzU9gl) introduces a reweighting of the reconstruction loss to be stronger than the KL loss, and we found that to work well in our case. The [NVAE](https://arxiv.org/abs/2007.03898) applies a non-constant weighting to loss components. A rudimentary form of scheduled loss recombination is used in our work.
+The [beta-VAE](https://openreview.net/forum?id=Sy2fzU9gl) introduces a reweighting of the reconstruction loss to be stronger than the KL loss, and we found that to work well in our case. The [NVAE](https://arxiv.org/abs/2007.03898) applies a non-constant weighting to loss components. A rudimentary form of scheduled loss recombination is used in CompressARC.
 
 #### ARC-AGI Methods
 
@@ -839,7 +839,7 @@ An older class of methods consists of hard-coded searches through program spaces
 
 [Bonnet and Macfarlane introduced a VAE-based method](https://arxiv.org/html/2411.08706v1) for searching through a latent space of programs.
 
-Out of all these past methods, we believe ours has been the only method so far that uses deep learning without external pretraining nor any large-scale search.
+We believe CompressARC is the only method so far that uses deep learning without external pretraining nor any large-scale search.
 
 #### Deep Learning Architectures
 
@@ -861,7 +861,7 @@ Our equivariance structures are inspired by [permutation-invariant neural networ
 
 #### Decoding Layer
 
-This layer's job is to sample a multitensor $z$ and bound its information content, before it is passed to the next layer. This layer and outputs the KL divergence between the learned $z$ distribution and $N(0,I)$. Penalizing the KL prevents the network from learning a distribution for $z$ that memorizes the ARC-AGI puzzle in an uncompressed fashion, and forces it to represent the puzzle more succinctly. Specifically, it forces the network to spend more bits on the KL whenever it uses $z$ to break a symmetry, and the larger the symmetry group broken, the more bits it spends.
+This layer's job is to sample a multitensor $z$ and bound its information content, before it is passed to the next layer. This layer and outputs the KL divergence between the learned $z$ distribution and $N(0,I)$. Penalizing the KL prevents CompressARC from learning a distribution for $z$ that memorizes the ARC-AGI puzzle in an uncompressed fashion, and forces it to represent the puzzle more succinctly. Specifically, it forces CompressARC to spend more bits on the KL whenever it uses $z$ to break a symmetry, and the larger the symmetry group broken, the more bits it spends.
 
 This layer takes as input:
  - A learned target multiscalar, called the "target capacity".[^9] The decoding layer will output $z$ whose information content per tensor is close to the target capacity,[^10]
@@ -1019,7 +1019,7 @@ These steps happen repeatedly for different unnecessarily coded pieces of inform
 
 ## Additional Case Studies
 
-Below, we show two additional puzzles and a dissection of our network's solution to them.
+Below, we show two additional puzzles and a dissection of CompressARC's solution to them.
 
 ### Case Study: Bounding Box
 
@@ -1034,13 +1034,13 @@ Puzzle 6d75e8bb is part of the training split.
 ##### Human Solution:
 We first realize that the input is red and black, and the output is also red and black, but some of the black pixels are replaced by light blue pixels. We see that the red shape remains unaffected. We notice that the light blue box surrounds the red shape, and finally that it is the smallest possible surrounding box that contains the red shape. At this point, we copy the input over to the answer grid, then we figure out the horizontal and vertical extent of the red shape, and color all of the non-red pixels within that extent as light blue.
 
-##### Network Solution:
+##### CompressARC Solution:
 <table width="100%" style="border: none;">
   <tr>
   <td width="50%">
   <strong> 50 steps of learning:</strong>
   <br><br/>
-  The average of sampled outputs shows that light blue pixels in the input are generally preserved in the output. However, black pixels in the input are haphazardly and randomly colored light blue and red. The network does not seem to know that the colored input/output pixels lie within some kind of bounding box, or that the bounding box is the same for the input and output grids.
+  The average of sampled outputs shows that light blue pixels in the input are generally preserved in the output. However, black pixels in the input are haphazardly and randomly colored light blue and red. CompressARC does not seem to know that the colored input/output pixels lie within some kind of bounding box, or that the bounding box is the same for the input and output grids.
   </td>
   <td width="50%"><img align="right" src="./resources/6d75e8bb_at_50_steps.png"></td>
   </tr>
@@ -1048,7 +1048,7 @@ We first realize that the input is red and black, and the output is also red and
   <td width="50%">
   <strong> 100 steps of learning:</strong>
   <br><br/>
-  The average of sampled outputs shows red pixels confined to an imaginary rectangle surrounding the light blue pixels. The network seems to have perceived that other examples use a common bounding box for the input and output pixels, but is not completely sure about where the boundary lies and what colors go inside the box in the output. Nevertheless, guess 2 (the second most frequently sampled output) shows that the correct answer is already being sampled quite often now.
+  The average of sampled outputs shows red pixels confined to an imaginary rectangle surrounding the light blue pixels. CompressARC seems to have perceived that other examples use a common bounding box for the input and output pixels, but is not completely sure about where the boundary lies and what colors go inside the box in the output. Nevertheless, guess 2 (the second most frequently sampled output) shows that the correct answer is already being sampled quite often now.
   </td>
   <td width="50%"><img align="right" src="./resources/6d75e8bb_at_100_steps.png"></td>
   </tr>
@@ -1056,7 +1056,7 @@ We first realize that the input is red and black, and the output is also red and
   <td width="50%">
   <strong> 150 steps of learning:</strong>
   <br><br/>
-  The average of sampled outputs shows almost all of the pixels in the imaginary bounding box to be colored red. The network has figured out the answer, and further training only refines the answer.
+  The average of sampled outputs shows almost all of the pixels in the imaginary bounding box to be colored red. CompressARC has figured out the answer, and further training only refines the answer.
   </td>
   <td width="50%"><img align="right" src="./resources/6d75e8bb_at_150_steps.png"></td>
   </tr>
@@ -1079,7 +1079,7 @@ We can look at the average output of the [decoding layer](#decoding-layer) for t
   <td width="50%">
   <strong> (Examples, height, channel) tensor:</strong>
   <br><br/>
-  The first principal component is 771 times stronger than the second principal component. <strong>A brighter pixel indicates a row with more light blue pixels.</strong> It is unclear how the network knows where the borders of the bounding box are.
+  The first principal component is 771 times stronger than the second principal component. <strong>A brighter pixel indicates a row with more light blue pixels.</strong> It is unclear how CompressARC knows where the borders of the bounding box are.
   </td>
   <td width="50%"><img align="right" src="./resources/6d75e8bb_example_height_component_0.png"></td>
   </tr>
@@ -1087,7 +1087,7 @@ We can look at the average output of the [decoding layer](#decoding-layer) for t
   <td width="50%">
   <strong> (Examples, width, channel) tensor:</strong>
   <br><br/>
-  The first principal component is 550 times stronger than the second principal component. <strong>A darker pixel indicates a column with more light blue pixels.</strong> It is unclear how the network knows where the borders of the bounding box are.
+  The first principal component is 550 times stronger than the second principal component. <strong>A darker pixel indicates a column with more light blue pixels.</strong> It is unclear how CompressARC knows where the borders of the bounding box are.
   </td>
   <td width="50%"><img align="right" src="./resources/6d75e8bb_example_width_component_0.png"></td>
   </tr>
@@ -1112,8 +1112,8 @@ We can look at the average output of the [decoding layer](#decoding-layer) for t
 ##### Human Solution:
 We first notice that the input consists of blue "bubble" shapes (really they are just squares, but the fact that they're blue reminds us of bubbles) on a light blue background and the output has the same. But in the output, there are now magenta rays emanating from the center of each bubble. We copy the input over to the answer grid, and then draw magenta rays starting from the center of each bubble out to the edge in every cardinal direction. At this point, we submit our answer and find that it is wrong, and we notice that in the given demonstrations, the blue bubble color is drawn on top of the magenta rays, and we have drawn the rays on top of the bubbles instead. So, we pick up the blue color and correct each point where a ray pierces a bubble, back to blue.
 
-##### Network Solution:
-We don't show the network's solution evolving over time because we think it is uninteresting; instead will describe. We don't see much change in the network's answer over time during learning. The network starts by copying over the input grid, and at some point, magenta rows and columns start to appear, and they slowly settle on the correct positions. At no point does the network mistakenly draw the rays on top of the bubbles; it has always had the order correct.
+##### CompressARC Solution:
+We don't show CompressARC's solution evolving over time because we think it is uninteresting; instead will describe. We don't see much change in CompressARC's answer over time during learning. It starts by copying over the input grid, and at some point, magenta rows and columns start to appear, and they slowly settle on the correct positions. At no point does CompressARC mistakenly draw the rays on top of the bubbles; it has always had the order correct.
 
 #### Solution Analysis: Center Cross
 
@@ -1130,7 +1130,7 @@ The only surviving tensors are the $(color, channel)$ and $(example, height, wid
   <td width="50%">
   <strong> (Examples, height, width, channel) tensor:</strong>
   <br><br/>
-  The top principal component is 2496 times stronger than the second principal component. <strong>The (examples, height, width, channel) tensor codes for the centers of the bubbles.</strong> In the KL contribution plot, we can see that the information content of this tensor is decreasing over time. Likely, the network is in the process of eliminating the plus shaped representation, and replacing it with a pixel instead, which takes fewer bits.
+  The top principal component is 2496 times stronger than the second principal component. <strong>The (examples, height, width, channel) tensor codes for the centers of the bubbles.</strong> In the KL contribution plot, we can see that the information content of this tensor is decreasing over time. Likely, CompressARC is in the process of eliminating the plus shaped representation, and replacing it with a pixel instead, which takes fewer bits.
   </td>
   <td width="50%"><img align="right" src="./resources/41e4d17e_example_height_width_component_0.png"></td>
   </tr>
