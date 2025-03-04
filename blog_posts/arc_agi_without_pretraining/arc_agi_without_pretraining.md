@@ -163,14 +163,14 @@ tags:
   #content {
     margin-left: 270px;
     margin-right: auto;
-    max-width: 1600px;
+    max-width: 900px;
     padding: 15px;
     box-sizing: border-box;
   }
   .footnotes {
     margin-left: 270px;
     margin-right: auto;
-    max-width: 1600px;
+    max-width: 900px;
     padding: 15px;
     box-sizing: border-box;
   }
