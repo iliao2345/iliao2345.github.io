@@ -2,7 +2,7 @@
 layout: default
 title: ARC-AGI Without Pretraining
 author: Isaac Liao, Albert Gu
-date: 2025-02-28
+date: 2025-03-04
 tags:
   - arc-agi
   - pretraining
