@@ -199,7 +199,7 @@ In this blog post, we aim to answer a simple yet fundamental question:
 
 The idea that efficient compression by itself lies at the heart of intelligence is not new (see, e.g., [Hernández-Orallo & Minaya-Collado, 1998](https://www.researchgate.net/publication/2472570_A_Formal_Definition_of_Intelligence_Based_on_an_Intensional_Variant_of_Algorithmic_Complexity); [Mahoney, 1999](https://gwern.net/doc/cs/algorithm/information/compression/1999-mahoney.pdf); [Hutter, 2005](https://link.springer.com/book/10.1007/b138233); [Legg & Hutter, 2007](https://arxiv.org/abs/0712.3329)). Rather than revisiting those theoretical discussions, we make a practical demonstration instead.
 
-In this work, we give evidence that lossless compression during inference time is sufficient to produce intelligent behavior, by developing a method **purely based on compression** that performs well on the [ARC-AGI challenge](https://arcprize.org/), a dataset of IQ-test-like puzzles about inferring a procedure/rule from limited demonstrations. Crucially, our solution, which we name CompressARC, obeys the following three restrictions:
+In this work, we give evidence that lossless compression during inference time is sufficient to produce intelligent behavior, by developing a method **purely based on compression** that performs well on the [ARC-AGI challenge](https://arcprize.org/), a dataset of IQ-test-like puzzles about inferring a procedure/rule from limited demonstrations. Crucially, our solution, which we name _CompressARC_, obeys the following three restrictions:
 
 - **No pretraining**; models are randomly initialized and trained during inference time.
 - **No dataset**; one model trains on just the target ARC-AGI puzzle and outputs one answer.
