@@ -162,16 +162,16 @@ tags:
   /* Main content area; adjust the margin to leave room for the sidebar */
   #content {
     margin-left: 270px;
-    padding: 15px;
-    width: calc(100%-270px);
+    margin-right: auto;
     max-width: 1600px;
+    padding: 15px;
     box-sizing: border-box;
   }
   .footnotes {
     margin-left: 270px;
-    padding: 15px;
-    width: calc(100%-270px);
+    margin-right: auto;
     max-width: 1600px;
+    padding: 15px;
     box-sizing: border-box;
   }
   @media (max-width: 768px) {
@@ -180,11 +180,9 @@ tags:
     }
     #content {
       margin-left: 0;
-      width: 100%;
     }
     .footnotes {
       margin-left: 0;
-      width: 100%;
     }
   }
 </style>
