@@ -335,7 +335,7 @@ Our one-size-fits-all compressor $(E', D')$ is built without knowing $p$, and it
 
 It is possible to prove with [algorithmic information theory](https://arxiv.org/abs/0809.2754) that $(E', D')$ achieves a bit efficiency at most $\text{len}(f)$ bits worse than the bit efficiency of $(E, D)$, where $f$ is the _code for implementing D_. But since compression is practically implementable, the code for $D$ should be simple enough for a human engineer to write, so $\text{len}(f)$ must be short, meaning our one-size-fits-all compressor will be close to the best possible bit efficiency.
 
-Ironically, the only problem with using this to solve ARC-AGI is that implementing $E'$ is not practical, since $E'$ needs to minimize the length of a program-input pair $(f, s)$ under partial fixed output constraint $f(s)\_{answers}=x\_{answers}$.
+Ironically, the only problem with using this to solve ARC-AGI is that implementing $E'$ is not practical, since $E'$ needs to minimize the length of a program-input pair $(f, s)$ under partial fixed output constraint $f(s)\_{puzzle}=x\_{puzzle}$.
 
 ### Neural Networks to the Rescue
 
