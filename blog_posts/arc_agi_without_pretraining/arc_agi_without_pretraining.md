@@ -290,7 +290,7 @@ We first realize that the input is divided into boxes, and the boxes are still t
   <td width="50%">
   <strong> 350 steps of learning:</strong>
   <br><br/>
-  The network output now shows the correct colors assigned to boxes of the correct direction from the center. It has realized that a single color-to-direction mapping is used to pick the blob colors in the other given outputs, so it imitates this mapping. It is still not the best at coloring within the lines, and it's also confused about the center blob, probably because the middle does not correspond to a direction. Nevertheless, the averate network output does show a tinge of the correct magenta color in the middle, meaning the network is catching on.
+  The network output now shows the correct colors assigned to boxes of the correct direction from the center. It has realized that a single color-to-direction mapping is used to pick the blob colors in the other given outputs, so it imitates this mapping. It is still not the best at coloring within the lines, and it's also confused about the center blob, probably because the middle does not correspond to a direction. Nevertheless, the average network output does show a tinge of the correct magenta color in the middle, meaning the network is catching on.
   </td>
   <td width="50%"><img align="right" src="./resources/272f95fa_at_350_steps.png"></td>
   </tr>
