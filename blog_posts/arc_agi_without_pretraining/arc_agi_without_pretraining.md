@@ -1,8 +1,17 @@
 ---
-layout: default
+layout: post
 title: ARC-AGI Without Pretraining
+description: We solve 20% of ARC-AGI-1 with no pretraining by minimizing the description length during inference time, with the only data involved being the target puzzle itself.
 author: Isaac Liao, Albert Gu
 date: 2025-03-05
+meta: |
+  <meta name="citation_title" content="ARC-AGI Without Pretraining">
+  <meta name="citation_author" content="Isaac Liao">
+  <meta name="citation_publication_date" content="2025-03-21">
+  <meta name="citation_pdf_url" content="https://iliao2345.github.io/blog_posts/arc_agi_without_pretraining/ARC_AGI_Without_Pretraining.pdf">
+  <meta name="citation_language" content="en">
+  <meta name="citation_keywords" content="ARC-AGI, pretraining, compression, MDL, Solomonoff">
+  <meta name="citation_public_url" content="{{ page.url | absolute_url }}">
 tags:
   - arc-agi
   - pretraining
@@ -189,7 +198,7 @@ tags:
 
 <div id="content" markdown="1">
 <a name="topofpage"></a>![image](./resources/teaser_figure_w_title.png)
-By <a href="https://iliao2345.github.io/">Isaac Liao</a> and <a href="https://goombalab.github.io/">Albert Gu</a>
+By <a href="https://iliao2345.github.io/">Isaac Liao</a> and <a href="https://goombalab.github.io/">Albert Gu</a>. <a href="https://iliao2345.github.io/blog_posts/arc_agi_without_pretraining/ARC_AGI_Without_Pretraining.pdf">PDF version here</a>.
 
 <br>
 ---
