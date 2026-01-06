@@ -198,7 +198,7 @@ tags:
 
 <div id="content" markdown="1">
 <a name="topofpage"></a>![image](./resources/teaser_figure_w_title.png)
-By <a href="https://iliao2345.github.io/">Isaac Liao</a> and <a href="https://goombalab.github.io/">Albert Gu</a>. <a href="https://www.arxiv.org/abs/2512.06104">arXiv version</a>.
+By <a href="https://iliao2345.github.io/">Isaac Liao</a> and <a href="https://goombalab.github.io/">Albert Gu</a>. <a href="https://www.arxiv.org/abs/2512.06104">arXiv link here</a>, <a href="https://iliao2345.github.io/blog_posts/arc_agi_without_pretraining/ARC_AGI_Without_Pretraining.pdf">PDF version here</a>.
 
 <br>
 ---
